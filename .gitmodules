@@ -1,0 +1,9 @@
+[submodule "reference/mib"]
+	path = reference/mib
+	url = https://github.com/hannamw/MIB-circuit-track.git
+[submodule "reference/phonologybench"]
+	path = reference/phonologybench
+	url = https://github.com/asuvarna31/llm_phonology.git
+[submodule "reference/eap-ig-faithfulness"]
+	path = reference/eap-ig-faithfulness
+	url = https://github.com/hannamw/eap-ig-faithfulness.git
