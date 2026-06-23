@@ -11,8 +11,9 @@ __pycache__/
 results_modal/
 
 # Build artifacts
-circuits/
+/circuits/
 .venv/
+.idea/
 
 # LaTeX build artifacts
 *.aux

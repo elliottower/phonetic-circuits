@@ -26,7 +26,7 @@ from sklearn.manifold import MDS
 REPO = Path(__file__).resolve().parent.parent.parent
 
 TASK_ORDER = ["op1_hypocorism", "op2_clipping", "op3_initialism",
-              "op4_oronym", "op5_homophone", "op7_folk_etym"]
+              "op4_oronym", "op5_homophone", "op6_folk_etym"]
 
 TASK_SHORT = {
     "op1_hypocorism": "Hypocorism",
@@ -34,7 +34,7 @@ TASK_SHORT = {
     "op3_initialism": "Initialism",
     "op4_oronym": "Oronym",
     "op5_homophone": "Homophone",
-    "op7_folk_etym": "Folk etym.",
+    "op6_folk_etym": "Folk etym.",
 }
 
 TASK_COLORS = {
@@ -43,7 +43,7 @@ TASK_COLORS = {
     "op3_initialism": "#4daf4a",
     "op4_oronym": "#984ea3",
     "op5_homophone": "#ff7f00",
-    "op7_folk_etym": "#a65628",
+    "op6_folk_etym": "#a65628",
 }
 
 plt.rcParams.update({

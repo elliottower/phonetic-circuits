@@ -5,8 +5,10 @@ to infer the causal DAG between heads — rather than assuming a graph.
 
 Methods:
   - PC algorithm (constraint-based, conditional independence tests)
+  - TPC (Temporal PC) — PC with layer-based tiered background knowledge
   - CD-NOD (exploits clean/corrupted distribution shift for edge orientation)
-  - NOTEARS (continuous optimization, acyclicity constraint)
+  - PCMCI+ (tigramite, treats layers as time dimension)
+  - GES (Greedy Equivalence Search, score-based)
   - LiNGAM (non-Gaussianity for identifiability)
 
 Pure Python, no Modal dependency.
@@ -18,6 +20,7 @@ Usage:
 """
 import argparse
 import json
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -25,6 +28,18 @@ from pathlib import Path
 import numpy as np
 import torch
 from tqdm import tqdm
+
+from causallearn.search.ConstraintBased.PC import pc
+from causallearn.search.ConstraintBased.CDNOD import cdnod
+from causallearn.search.ScoreBased.GES import ges
+from causallearn.search.FCMBased.lingam import DirectLiNGAM
+from causallearn.utils.cit import fisherz
+from causallearn.graph.GraphNode import GraphNode
+from causallearn.utils.PCUtils.BackgroundKnowledge import BackgroundKnowledge
+
+from tigramite import data_processing as pp
+from tigramite.pcmci import PCMCI
+from tigramite.independence_tests.parcorr import ParCorr
 
 from transformer_lens import HookedTransformer
 
@@ -36,7 +51,7 @@ MODEL_NAMES = {
     "gpt2-medium": "gpt2-medium",
 }
 
-AVAILABLE_METHODS = ["pc", "cdnod", "notears", "lingam"]
+AVAILABLE_METHODS = ["pc", "tpc", "cdnod", "pcmci", "ges", "lingam"]
 
 
 def log(msg: str):
@@ -91,9 +106,6 @@ def collect_head_activations(model, dataset, device, max_examples=200):
 
 def run_pc(data, var_names, alpha=0.05):
     """PC algorithm via causal-learn."""
-    from causallearn.search.ConstraintBased.PC import pc
-    from causallearn.utils.cit import fisherz
-
     log(f"  Running PC (alpha={alpha}, {data.shape[0]} samples, {data.shape[1]} vars)")
     t0 = time.time()
     cg = pc(data, alpha=alpha, indep_test=fisherz, stable=True,
@@ -121,9 +133,6 @@ def run_pc(data, var_names, alpha=0.05):
 
 def run_cdnod(data, c_indx, var_names, alpha=0.05):
     """CD-NOD: exploits distribution shift for edge orientation."""
-    from causallearn.search.ConstraintBased.CDNOD import cdnod
-    from causallearn.utils.cit import fisherz
-
     log(f"  Running CD-NOD (alpha={alpha}, {data.shape[0]} samples, {data.shape[1]} vars)")
     t0 = time.time()
     cg = cdnod(data, c_indx, alpha=alpha, indep_test=fisherz, stable=True,
@@ -149,49 +158,141 @@ def run_cdnod(data, c_indx, var_names, alpha=0.05):
     }
 
 
-def run_notears(data, var_names):
-    """NOTEARS: continuous optimization with acyclicity constraint."""
-    from causallearn.search.ScoreBased.ExactSearch import bic_exact_search
+def _parse_layer(name):
+    """Extract layer number from head name like 'a11.h0' -> 11."""
+    m = re.match(r'a(\d+)\.h\d+', name)
+    return int(m.group(1)) if m else 0
 
-    log(f"  Running NOTEARS ({data.shape[0]} samples, {data.shape[1]} vars)")
 
-    try:
-        from notears.linear import notears_linear
-        t0 = time.time()
-        W = notears_linear(data, lambda1=0.1, loss_type="l2")
-        elapsed = time.time() - t0
-    except ImportError:
-        from causallearn.search.FCMBased import lingam
-        log("    notears not installed, falling back to DirectLiNGAM")
-        return run_lingam(data, var_names)
+def run_tpc(data, var_names, alpha=0.05):
+    """Temporal PC: PC with layer-based tiered background knowledge.
 
+    Cross-tier edges are directed (lower layer -> higher layer).
+    Within-tier edges remain undirected (discovered by PC).
+    """
+    log(f"  Running TPC (alpha={alpha}, {data.shape[0]} samples, {data.shape[1]} vars)")
+
+    layers = [_parse_layer(name) for name in var_names]
+
+    bk = BackgroundKnowledge()
+    nodes = {name: GraphNode(name) for name in var_names}
+    n = len(var_names)
+    for i in tqdm(range(n), desc="    Building background knowledge"):
+        for j in range(n):
+            if i == j:
+                continue
+            if layers[i] > layers[j]:
+                # Forbid higher-layer -> lower-layer direction
+                bk.add_forbidden_by_node(nodes[var_names[i]], nodes[var_names[j]])
+
+    t0 = time.time()
+    cg = pc(data, alpha=alpha, indep_test=fisherz, stable=True,
+            uc_rule=0, uc_priority=2, verbose=False, show_progress=False,
+            background_knowledge=bk)
+    elapsed = time.time() - t0
+
+    adj = cg.G.graph
+    edges = []
+    for i in range(n):
+        for j in range(n):
+            if adj[i, j] == -1 and adj[j, i] == 1:
+                edges.append((var_names[i], var_names[j], "directed"))
+            elif adj[i, j] == -1 and adj[j, i] == -1 and i < j:
+                edges.append((var_names[i], var_names[j], "undirected"))
+
+    return {
+        "method": "tpc",
+        "n_edges": len(edges),
+        "edges": edges,
+        "elapsed_s": elapsed,
+        "adjacency": adj.tolist(),
+    }
+
+
+def run_pcmci(data, var_names, alpha=0.05):
+    """PCMCI+: treats head activations as multivariate 'time series' over layers.
+
+    Each sample is one observation. Variables are grouped by layer to define
+    the temporal ordering. PCMCI+ handles contemporaneous edges (same layer)
+    and skip-layer connections.
+    """
+    log(f"  Running PCMCI+ (alpha={alpha}, {data.shape[0]} samples, {data.shape[1]} vars)")
+    t0 = time.time()
+
+    # tigramite expects (T, N) array
+    dataframe = pp.DataFrame(data, var_names=var_names)
+    parcorr = ParCorr(significance='analytic')
+    pcmci_obj = PCMCI(dataframe=dataframe, cond_ind_test=parcorr, verbosity=0)
+
+    # tau_max: max lag = number of distinct layers - 1
+    layers = [_parse_layer(name) for name in var_names]
+    tau_max = max(layers) - min(layers) if len(set(layers)) > 1 else 1
+    # Cap at reasonable value to keep runtime manageable
+    tau_max = min(tau_max, 5)
+
+    results_pcmci = pcmci_obj.run_pcmciplus(tau_min=0, tau_max=tau_max, pc_alpha=alpha)
+    elapsed = time.time() - t0
+
+    graph = results_pcmci['graph']  # (N, N, tau_max+1) array of strings
+    val_matrix = results_pcmci['val_matrix']
+    n = len(var_names)
+
+    edges = []
+    for tau in range(tau_max + 1):
+        for i in range(n):
+            for j in range(n):
+                link = graph[i, j, tau]
+                if link == '-->':
+                    edges.append((var_names[i], var_names[j], "directed", float(val_matrix[i, j, tau]), tau))
+                elif link == 'o-o' and i < j:
+                    edges.append((var_names[i], var_names[j], "undirected", float(val_matrix[i, j, tau]), tau))
+                elif link == 'x-x' and i < j:
+                    edges.append((var_names[i], var_names[j], "undirected", float(val_matrix[i, j, tau]), tau))
+
+    return {
+        "method": "pcmci",
+        "n_edges": len(edges),
+        "edges": edges,
+        "elapsed_s": elapsed,
+        "tau_max": tau_max,
+    }
+
+
+def run_ges(data, var_names):
+    """GES: Greedy Equivalence Search (score-based)."""
+    log(f"  Running GES ({data.shape[0]} samples, {data.shape[1]} vars)")
+    t0 = time.time()
+    result = ges(data, score_func='local_score_BIC')
+    elapsed = time.time() - t0
+
+    adj = result['G'].graph
     edges = []
     n = len(var_names)
     for i in range(n):
         for j in range(n):
-            if abs(W[i, j]) > 0.01:
-                edges.append((var_names[i], var_names[j], "directed", float(W[i, j])))
+            if adj[i, j] == -1 and adj[j, i] == 1:
+                edges.append((var_names[i], var_names[j], "directed"))
+            elif adj[i, j] == -1 and adj[j, i] == -1 and i < j:
+                edges.append((var_names[i], var_names[j], "undirected"))
 
     return {
-        "method": "notears",
+        "method": "ges",
         "n_edges": len(edges),
         "edges": edges,
         "elapsed_s": elapsed,
-        "weight_matrix": W.tolist() if hasattr(W, 'tolist') else W,
+        "adjacency": adj.tolist(),
     }
 
 
 def run_lingam(data, var_names):
     """DirectLiNGAM: non-Gaussianity based identifiability."""
-    from causallearn.search.FCMBased.lingam import DirectLiNGAM
-
     log(f"  Running DirectLiNGAM ({data.shape[0]} samples, {data.shape[1]} vars)")
     t0 = time.time()
     model = DirectLiNGAM()
     model.fit(data)
     elapsed = time.time() - t0
 
-    B = model.adjacency_matrix_
+    B = np.array(model.adjacency_matrix_) if not isinstance(model.adjacency_matrix_, np.ndarray) else model.adjacency_matrix_
     edges = []
     n = len(var_names)
     for i in range(n):
@@ -199,15 +300,18 @@ def run_lingam(data, var_names):
             if abs(B[i, j]) > 0.01:
                 edges.append((var_names[j], var_names[i], "directed", float(B[i, j])))
 
-    adj = B.tolist() if hasattr(B, 'tolist') else B
-    order = model.causal_order_.tolist() if hasattr(model.causal_order_, 'tolist') else list(model.causal_order_)
+    order = model.causal_order_
+    if hasattr(order, 'tolist'):
+        order = order.tolist()
+    else:
+        order = list(order)
 
     return {
         "method": "lingam",
         "n_edges": len(edges),
         "edges": edges,
         "elapsed_s": elapsed,
-        "adjacency_matrix": adj,
+        "adjacency_matrix": B.tolist(),
         "causal_order": order,
     }
 
@@ -246,10 +350,14 @@ def run_task(model, task, args, device):
         try:
             if method == "pc":
                 r = run_pc(data_combined, sel_names, alpha=args.alpha)
+            elif method == "tpc":
+                r = run_tpc(data_combined, sel_names, alpha=args.alpha)
             elif method == "cdnod":
                 r = run_cdnod(data_combined, c_indx, sel_names, alpha=args.alpha)
-            elif method == "notears":
-                r = run_notears(data_combined, sel_names)
+            elif method == "pcmci":
+                r = run_pcmci(data_combined, sel_names, alpha=args.alpha)
+            elif method == "ges":
+                r = run_ges(data_combined, sel_names)
             elif method == "lingam":
                 r = run_lingam(data_combined, sel_names)
             else:

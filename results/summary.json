@@ -1,0 +1,72 @@
+{
+  "model": "gpt2",
+  "method": "EAP-IG",
+  "tasks": {
+    "op1_hypocorism": {
+      "behavioral": {
+        "task": "op1_hypocorism",
+        "accuracy": 0.9090909090909091,
+        "mean_logit_diff": 1.6743795799486565,
+        "n": 132
+      },
+      "circuit_path": "/results/circuits/EAP-IG_patching_edge/op1_hypocorism_gpt2.json",
+      "cpr": 1.0059211236739283,
+      "cmd": 0.0175225199485596
+    },
+    "op2_clipping": {
+      "behavioral": {
+        "task": "op2_clipping",
+        "accuracy": 0.9354838709677419,
+        "mean_logit_diff": 1.7990337648699362,
+        "n": 62
+      },
+      "circuit_path": "/results/circuits/EAP-IG_patching_edge/op2_clipping_gpt2.json",
+      "cpr": 1.0072167348912195,
+      "cmd": 0.019406570740153346
+    },
+    "op3_initialism": {
+      "behavioral": {
+        "task": "op3_initialism",
+        "accuracy": 0.7058823529411765,
+        "mean_logit_diff": 0.5753943639643052,
+        "n": 68
+      },
+      "circuit_path": "/results/circuits/EAP-IG_patching_edge/op3_initialism_gpt2.json",
+      "cpr": 1.0428737771142433,
+      "cmd": 0.059869930286756634
+    },
+    "op4_oronym": {
+      "behavioral": {
+        "task": "op4_oronym",
+        "accuracy": 0.7307692307692307,
+        "mean_logit_diff": 1.26334698842122,
+        "n": 104
+      },
+      "circuit_path": "/results/circuits/EAP-IG_patching_edge/op4_oronym_gpt2.json",
+      "cpr": 1.0056972622126916,
+      "cmd": 0.047428174907266044
+    },
+    "op5_homophone": {
+      "behavioral": {
+        "task": "op5_homophone",
+        "accuracy": 0.9230769230769231,
+        "mean_logit_diff": 2.7754835348862867,
+        "n": 52
+      },
+      "circuit_path": "/results/circuits/EAP-IG_patching_edge/op5_homophone_gpt2.json",
+      "cpr": 0.9990266727064401,
+      "cmd": 0.025297493254021513
+    },
+    "op6_folk_etym": {
+      "behavioral": {
+        "task": "op6_folk_etym",
+        "accuracy": 1.0,
+        "mean_logit_diff": 3.207121580839157,
+        "n": 64
+      },
+      "circuit_path": "/results/circuits/EAP-IG_patching_edge/op6_folk_etym_gpt2.json",
+      "cpr": 1.0631572258677635,
+      "cmd": 0.07233352882166053
+    }
+  }
+}

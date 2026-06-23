@@ -191,7 +191,7 @@ def run_composition_experiments(model, directions, args, device):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compose DAS directions across tasks")
-    parser.add_argument("--das-dir", type=str, required=True)
+    parser.add_argument("--das-dir", type=str, default=None)
     parser.add_argument("--model", type=str, default="gpt2")
     parser.add_argument("--layer", type=int, default=9)
     parser.add_argument("--k", type=int, default=1)
@@ -218,6 +218,8 @@ if __name__ == "__main__":
             U = train_das(model, train_data, args.layer, device, k=args.k, n_steps=100)
             directions.setdefault(task, {})[args.layer] = U.cpu()
     else:
+        if not args.das_dir:
+            parser.error("--das-dir is required when not using --retrain")
         log(f"Loading DAS directions from {args.das_dir}")
         directions = load_das_directions(args.das_dir, args.model, args.k)
 

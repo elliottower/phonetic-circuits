@@ -84,6 +84,10 @@ Source key: **E** = Elliot-originated, **C** = Claude-suggested, **E+** = Elliot
 - [ ] Sandy Witch -> Sandwich (C)
 - [ ] Stan Dard -> Standard (C)
 - [ ] Will Power -> Willpower (C)
+- [x] Pete Zah -> Pizza (E, "I love that example LMFAO")
+- [-] Penny Cillin -> Penicillin (C, messy — too many syllables)
+- [x] Sue Permarket -> Supermarket (C, "i like sue permarket")
+- [x] Al Gorithm -> Algorithm (C, "funny")
 
 ## Category B: Single Shortening + Phonetic (first name shortens)
 
@@ -139,6 +143,25 @@ Source key: **E** = Elliot-originated, **C** = Claude-suggested, **E+** = Elliot
 - [ ] Cameron Painkiller -> Cam Pain -> Campaign (C) 
 - [ ] Robert Bustard -> Rob Bust -> Robust (C)
 - [ ] Michael Croissant -> Mike Cro -> Micro (C) --- horrible but also kinda funny) 
+
+## Category B3: Double Shortening + Fusion (both names shorten, then fuse into a real word)
+
+- [ ] Susan Perr -> Sue Perr -> Super (E)
+- [ ] Katherine Astrophe -> Cat Astrophe -> Catastrophe (C)
+- [ ] Samuel Cargo -> S. Cargo -> Escargot (C)
+- [ ] Benjamin Fitting -> Ben Fit -> Benefit (C)
+- [ ] Robert Institution -> Rob In -> Robin (C)
+- [-] Conathan Doe -> Con Do -> Condo (E) x
+- [ ] Johnathan Diss -> Jaun Diss -> Jaundice (E)
+
+## Category B4: Single Shortening + Fusion
+
+- [ ] Thomas Hawk -> Tom Hawk -> Tomahawk (C)
+- [ ] Patricia Riot -> Pat Riot -> Patriot (C)
+- [ ] Down Badminton -> Down Bad (E)
+- [ ] Richard Polygon -> Dick Poly -> (E, just funny)
+- [ ] Tangerine Gentlemen -> (E)
+- [ ] Cam Bridge -> Cambridge (E)
 
 ## Category C: Literal Shortenings (name shortens to common word) -- all kind of bad 
 

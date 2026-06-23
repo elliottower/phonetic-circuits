@@ -350,11 +350,11 @@ def build_op5():
 
 
 # ============================================================
-# Op 7: Folk etymology (reverse decomposition)
+# Op 6: Folk etymology (reverse decomposition)
 # ============================================================
 OP7_PAIRS = [
     # (word, target_name, foil_name, corrupt_word)
-    # Op 7 = reverse decomposition: word -> first name hidden inside it.
+    # Op 6 = reverse decomposition: word -> first name hidden inside it.
     # Target MUST be a real name that GPT-2 would plausibly predict,
     # AND the name must genuinely appear in the word's spelling.
     ("timber", "Tim", "Joe", "lumber"),
@@ -389,7 +389,7 @@ CORRUPT_WORDS_POOL = [
 ]
 
 
-def build_op7():
+def build_op6():
     rows = []
     words = [p[0] for p in OP7_PAIRS]
     all_corrupts = words + CORRUPT_WORDS_POOL
@@ -424,7 +424,7 @@ BUILDERS = {
     "op3_initialism": build_op3,
     "op4_oronym": build_op4,
     "op5_homophone": build_op5,
-    "op7_folk_etym": build_op7,
+    "op6_folk_etym": build_op6,
 }
 
 

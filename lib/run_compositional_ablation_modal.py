@@ -1,14 +1,12 @@
-"""Thin Modal wrapper for DAS causal variable localization.
-
-Parallelizes across tasks — one GPU container per task.
+"""Thin Modal wrapper for compositional ablation.
 
 Usage:
-    modal run --detach lib/run_das_modal.py
-    modal run --detach lib/run_das_modal.py --k 4
+    modal run --detach lib/run_compositional_ablation_modal.py
+    modal run --detach lib/run_compositional_ablation_modal.py --circuit-a op1_hypocorism --circuit-b op4_oronym
 """
 import modal
 
-app = modal.App("phonetic-das")
+app = modal.App("phonetic-compositional-ablation")
 vol = modal.Volume.from_name("phonetic-circuits-results", create_if_missing=True)
 
 image = (
@@ -20,10 +18,8 @@ image = (
     )
     .add_local_dir("datasets", "/root/phonetic-circuits/datasets")
     .add_local_dir("lib", "/root/phonetic-circuits/lib")
+    .add_local_dir("results", "/root/phonetic-circuits/results")
 )
-
-TASKS = ["op1_hypocorism", "op2_clipping", "op3_initialism",
-         "op4_oronym", "op5_homophone", "op6_folk_etym"]
 
 
 @app.function(
@@ -32,7 +28,7 @@ TASKS = ["op1_hypocorism", "op2_clipping", "op3_initialism",
     timeout=7200,
     volumes={"/results": vol},
 )
-def run_task(task: str, k: int = 1):
+def run(circuit_a: str = "op1_hypocorism", circuit_b: str = "op4_oronym", top_k: int = 15):
     import subprocess
     import sys
     import os
@@ -41,19 +37,20 @@ def run_task(task: str, k: int = 1):
     sys.path.insert(0, "/root/phonetic-circuits")
 
     cmd = [
-        sys.executable, "-m", "lib.run_das",
-        "--tasks", task,
-        "--k", str(k),
-        "--output-dir", "/results/das",
+        sys.executable, "-m", "lib.run_compositional_ablation",
+        "--circuit-a", circuit_a,
+        "--circuit-b", circuit_b,
+        "--top-k", str(top_k),
+        "--output-dir", "/results/compositional_ablation",
         "--device", "cuda",
     ]
     print(f"Running: {' '.join(cmd)}", flush=True)
     subprocess.run(cmd, check=True)
 
     vol.commit()
-    print(f"Done {task}, results committed to volume.", flush=True)
+    print("Done, results committed to volume.", flush=True)
 
 
 @app.local_entrypoint()
-def main(k: int = 1):
-    list(run_task.map(TASKS, kwargs={"k": k}))
+def main(circuit_a: str = "op1_hypocorism", circuit_b: str = "op4_oronym", top_k: int = 15):
+    run.remote(circuit_a=circuit_a, circuit_b=circuit_b, top_k=top_k)
