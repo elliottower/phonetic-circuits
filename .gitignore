@@ -1,0 +1,37 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.DS_Store
+
+# Model weights
+*.pt
+*.pkl
+
+# Local results (synced via Modal volume)
+results/
+results_modal/
+
+# Build artifacts
+circuits/
+.venv/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Top-level figures (not slides/figures)
+figures/*.png
+figures/*.pdf
+
+# PDF artifacts (keep slides PDF in git for sharing)
+arxiv_*.pdf
+
+# Lock file
+uv.lock

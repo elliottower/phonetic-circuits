@@ -34,7 +34,7 @@
 
 \hypersetup{
   colorlinks=true,
-  linkcolor=.,
+  linkcolor=black,
   urlcolor=accent,
   citecolor=accent
 }
@@ -60,8 +60,8 @@
 \hypertarget{sl:overview}{}
 
 \begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\textbf{Part 1: The Question}
+\begin{column}{0.31\textwidth}
+\textbf{\hyperlink{sl:motivation}{Part 1: The Question}}
 \begin{enumerate}
   \item \hyperlink{sl:motivation}{Motivation}
   \item \hyperlink{sl:operations}{The six operations}
@@ -69,26 +69,54 @@
 \end{enumerate}
 
 \vspace{0.8em}
-\textbf{Part 2: Methods}
+\textbf{\hyperlink{sl:datasets}{Part 2: Methods}}
 \begin{enumerate}\setcounter{enumi}{3}
   \item \hyperlink{sl:datasets}{Datasets}
   \item \hyperlink{sl:discovery}{Circuit discovery}
 \end{enumerate}
-\end{column}
 
-\begin{column}{0.48\textwidth}
-\textbf{Part 3: Circuits}
+\vspace{0.8em}
+\textbf{\hyperlink{sl:backbone}{Part 3: Hypotheses}}
 \begin{enumerate}\setcounter{enumi}{5}
   \item \hyperlink{sl:backbone}{Backbone hypothesis}
-  \item \hyperlink{sl:fusionheads}{Fusion heads}
+  \item \hyperlink{sl:fusionheads}{Predicted architectures}
   \item \hyperlink{sl:composition}{Compositional validation}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.31\textwidth}
+\textbf{\hyperlink{sl:results}{Part 4: Circuit Localization}}
+\begin{enumerate}\setcounter{enumi}{8}
+  \item \hyperlink{sl:behavioral}{Behavioral validation}
+  \item \hyperlink{sl:eapresults}{EAP-IG circuits}
+  \item \hyperlink{sl:circuitoverlap}{Circuit overlap}
 \end{enumerate}
 
 \vspace{0.8em}
-\textbf{Part 4: Implications}
-\begin{enumerate}\setcounter{enumi}{8}
-  \item \hyperlink{sl:tokenization}{Tokenization bottleneck}
-  \item \hyperlink{sl:discussion}{Discussion}
+\textbf{\hyperlink{sl:cvl}{Part 5: Causal Variable Localization}}
+\begin{enumerate}\setcounter{enumi}{11}
+  \item \hyperlink{sl:cvl}{What flows along edges?}
+  \item \hyperlink{sl:dasresults}{DAS results}
+\end{enumerate}
+\end{column}
+
+\begin{column}{0.31\textwidth}
+\textbf{\hyperlink{sl:validation}{Part 6: Validation}}
+\begin{enumerate}\setcounter{enumi}{13}
+  \item \hyperlink{sl:circuitoverlap}{Cross-task overlap}
+  \item \hyperlink{sl:causaldiscovery}{Causal discovery}
+  \item \hyperlink{sl:dasbaselines}{DAS IIA vs.\ baselines}
+  \item \hyperlink{sl:edgepatching}{Edge patching}
+\end{enumerate}
+
+\vspace{0.8em}
+\textbf{\hyperlink{sl:discussion}{Part 7: Implications}}
+\begin{enumerate}\setcounter{enumi}{17}
+  \item \hyperlink{sl:discussion}{Causal abstraction}
+  \item \hyperlink{sl:mechanism}{What is a mechanism?}
+  \item \hyperlink{sl:cogsci}{Cognitive science parallel}
+  \item \hyperlink{sl:tooling}{Limitations of current tools}
+  \item \hyperlink{sl:tokenization}{Future work}
 \end{enumerate}
 \end{column}
 \end{columns}
@@ -100,9 +128,9 @@
 \begin{frame}[plain,noframenumbering]
 \begin{center}
 \vfill
-  \fcolorbox{black}{white}{\parbox{0.65\textwidth}{\centering\vspace{0.8em}
+  {\setlength{\fboxrule}{2.5pt}\fcolorbox{black}{white}{\parbox{0.7\textwidth}{\centering\vspace{0.8em}
     {\Large\bfseries Part 1: The Question}
-  \vspace{0.8em}}}
+  \vspace{0.8em}}}}
 \vfill
 \end{center}
 \end{frame}
@@ -115,7 +143,7 @@
 
 The MI literature has characterized circuits for:
 \begin{itemize}
-  \item Syntax: IOI, subject--verb agreement, reflexive anaphora
+  \item Syntax: \href{https://arxiv.org/abs/2211.00593}{IOI} (Wang et al., 2023), subject--verb agreement, reflexive anaphora
   \item Retrieval: induction heads, greater-than
   \item Factual: capital cities, birth years
 \end{itemize}
@@ -192,7 +220,7 @@ How? Which heads? Is there a dedicated circuit?
 \vspace{0.5em}
 Each requires a \textbf{linguistically distinct} computation.
 
-$\Rightarrow$ Predicts \textbf{distinct circuit architectures}.
+$\to$ Predicts \textbf{distinct circuit architectures}.
 \end{frame}
 
 % =============================================
@@ -205,8 +233,8 @@ $\Rightarrow$ Predicts \textbf{distinct circuit architectures}.
   scale=0.85, transform shape,
   op/.style={draw, rounded corners=4pt, minimum height=0.7cm, minimum width=2.8cm,
              font=\small, align=center},
-  cat/.style={draw=none, font=\small\bfseries, text=chill!70!black},
-  arr/.style={-{Stealth[length=2mm]}, thick, chill}
+  cat/.style={draw=none, font=\small\bfseries, text=black},
+  arr/.style={-{Stealth[length=2mm]}, thick, black}
 ]
   % Categories
   \node[cat] (stored) at (0, 2.5) {Stored lookup};
@@ -232,7 +260,7 @@ $\Rightarrow$ Predicts \textbf{distinct circuit architectures}.
   \node[font=\scriptsize\itshape, below=0.15cm of op7] {microwave $\to$ Michael Wave};
 
   % Difficulty arrow
-  \draw[arr, very thick, phoneme!60] (0, -1.8) -- (10, -1.8)
+  \draw[arr, very thick, black] (0, -1.8) -- (10, -1.8)
     node[midway, below, font=\small] {Increasing computational complexity};
 \end{tikzpicture}
 \end{center}
@@ -331,25 +359,25 @@ composing phonemes from both ``Bill'' and ``Ding'' into ``building.''
   \draw[arr] (tater) |- (op4a);
   \draw[arr] (op4a) -- (dictator);
 
-  % William Dingo -> Building
-  \node[box, fill=accent!10] (william) at (7.5, 2) {William};
-  \node[box, fill=accent!10] (dingo) at (11, 2) {Dingo};
+  % Michael Pencil -> Mike Pence
+  \node[box, fill=accent!10] (michael) at (7.5, 2) {Michael};
+  \node[box, fill=accent!10] (pencil) at (11, 2) {Pencil};
 
   \node[opbox, fill=backbone!20] (op1b) at (7.5, 0.8) {Op 1};
-  \node[box, fill=backbone!10] (bill) at (7.5, -0.3) {Bill};
+  \node[box, fill=backbone!10] (mike) at (7.5, -0.3) {Mike};
 
-  \node[opbox, fill=fusion!20] (op4b) at (9.25, -1.5) {Op 4};
-  \node[box, fill=circuit!15, minimum width=2.5cm] (building) at (9.25, -2.7) {\textbf{Building}};
+  \node[opbox, fill=accent!20] (op2b) at (9.25, -1.5) {Op 2};
+  \node[box, fill=circuit!15, minimum width=2.5cm] (mikepence) at (9.25, -2.7) {\textbf{Mike Pence}};
 
-  \draw[arr] (william) -- (op1b);
-  \draw[arr] (op1b) -- (bill);
-  \draw[arr] (bill) -- (op4b);
-  \draw[arr] (dingo) |- (op4b);
-  \draw[arr] (op4b) -- (building);
+  \draw[arr] (michael) -- (op1b);
+  \draw[arr] (op1b) -- (mike);
+  \draw[arr] (mike) -- (op2b);
+  \draw[arr] (pencil) |- (op2b);
+  \draw[arr] (op2b) -- (mikepence);
 
   % Labels
   \node[font=\scriptsize\itshape, chill] at (1.75, -3.5) {Op 1 + Op 4};
-  \node[font=\scriptsize\itshape, chill] at (9.25, -3.5) {Op 1 + Op 4};
+  \node[font=\scriptsize\itshape, chill] at (9.25, -3.5) {Op 1 + Op 2};
 \end{tikzpicture}
 \end{center}
 
@@ -365,9 +393,9 @@ Ablate Op 4 circuit $\Rightarrow$ compound breaks, Op 1 survives.
 \begin{frame}[plain,noframenumbering]
 \begin{center}
 \vfill
-  \fcolorbox{black}{white}{\parbox{0.65\textwidth}{\centering\vspace{0.8em}
+  {\setlength{\fboxrule}{2.5pt}\fcolorbox{black}{white}{\parbox{0.7\textwidth}{\centering\vspace{0.8em}
     {\Large\bfseries Part 2: Methods}
-  \vspace{0.8em}}}
+  \vspace{0.8em}}}}
 \vfill
 \end{center}
 \end{frame}
@@ -378,11 +406,11 @@ Ablate Op 4 circuit $\Rightarrow$ compound breaks, Op 1 survives.
 \begin{frame}{Minimal-pair datasets}
 \hypertarget{sl:datasets}{}
 
-Each pair follows BLiMP format: \texttt{\{good, bad, target\_token, foil\_token\}}
+Each pair follows \href{https://arxiv.org/abs/1912.00582}{BLiMP} format {\scriptsize(Warstadt et al., 2020)}: \texttt{\{good, bad, target\_token, foil\_token\}}
 
 \vspace{0.5em}
 \begin{center}
-\small
+\footnotesize
 \begin{tabular}{lll}
 \toprule
 \textbf{Operation} & \textbf{Good prompt} & \textbf{Target / Foil} \\
@@ -403,8 +431,39 @@ Op 7 & ``Mike Rowave sounds like'' & microwave / nothing \\
 \textbf{Gate:} $>$70\% accuracy before circuit discovery.
 
 \vspace{0.5em}
-Ops 2, 3, 5 are procedurally expandable (CMU Dict).\\
+Ops 2, 3, 5 are procedurally expandable (\href{http://www.speech.cs.cmu.edu/cgi-bin/cmudict}{CMU Pronouncing Dictionary}).\\
 Ops 1, 4, 7 are controlled vocabularies.
+\end{frame}
+
+% =============================================
+% EXAMPLES
+% =============================================
+\begin{frame}{The dataset: selected examples}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lll}
+\toprule
+\textbf{Input} & \textbf{Target} & \textbf{Operation} \\
+\midrule
+Richard Tater & Dictator & Op 1 + Op 4 \\
+William Ding & Building & Op 1 + Op 4 \\
+Elizabeth Aardvark & Lizard & Op 2 + Op 4 \\
+\midrule
+Bill Ding & Building & Op 4 only \\
+Justin Time & Just in time & Op 4 only \\
+Brock Lee & Broccoli & Op 4 only \\
+Barb Dwyer & Barbed wire & Op 4 only \\
+\midrule
+Mike Rowave & Microwave & Op 7 (reverse) \\
+Dan Druff & Dandruff & Op 4 only \\
+Herb Ivore & Herbivore & Op 4 only \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.3em}
+{\small 99 oronym pairs, 32 hypocorism pairs, 120 homophone pairs --- 446 total minimal pairs across 6 operations.}
 \end{frame}
 
 % =============================================
@@ -444,7 +503,7 @@ BPE tokenization can break phonological tasks:
   \node[tok] (s3) at (1.55, -1.5) {l};
   \node[font=\small] at (2.05, -1.5) {/};
   \node[tok] (s4) at (2.4, -1.5) {l};
-  \node[font=\small, accent] at (4, -1.5) {character-level input};
+  \node[font=\small, accent] at (5.5, -1.5) {character-level input};
 \end{tikzpicture}
 \end{center}
 
@@ -466,37 +525,36 @@ $\Rightarrow$ Weight-space capacity vs.\ activation-flow distinction.
   scale=0.85, transform shape,
   method/.style={draw, rounded corners=6pt, minimum height=2.2cm, minimum width=3.2cm,
                  align=center, font=\small},
-  arr/.style={-{Stealth[length=2mm]}, thick, chill}
+  arr/.style={-{Stealth[length=2mm]}, thick, black}
 ]
   \node[method, fill=accent!10] (eap) at (0, 0) {
-    \textbf{EAP}\\[3pt]
+    \textbf{EAP-IG}\\[3pt]
     {\scriptsize Gradient-based}\\
-    {\scriptsize head importance}\\
-    {\scriptsize via \texttt{hook\_z}}
+    {\scriptsize edge attribution}\\
+    {\scriptsize (Syed et al., 2023)}
   };
 
   \node[method, fill=circuit!10] (ap) at (5, 0) {
     \textbf{Activation}\\
     \textbf{Patching}\\[3pt]
     {\scriptsize Mean-ablate each}\\
-    {\scriptsize head, measure}\\
+    {\scriptsize node/edge, measure}\\
     {\scriptsize logit-diff drop}
   };
 
-  \node[method, fill=fusion!10] (ws) at (10, 0) {
-    \textbf{Weight-Space}\\
-    \textbf{Features}\\[3pt]
-    {\scriptsize 173 features/head}\\
-    {\scriptsize (spectral +}\\
-    {\scriptsize behavioral proxy)}
+  \node[method, fill=fusion!10] (das) at (10, 0) {
+    \textbf{DAS}\\[3pt]
+    {\scriptsize Find linear subspace}\\
+    {\scriptsize encoding the causal}\\
+    {\scriptsize variable (IIA)}
   };
 
   \draw[arr] (eap) -- (ap) node[midway, above, font=\scriptsize] {validate};
-  \draw[arr] (ap) -- (ws) node[midway, above, font=\scriptsize] {predict};
+  \draw[arr] (ap) -- (das) node[midway, above, font=\scriptsize] {localize};
 
   \node[draw, dashed, rounded corners=4pt, fill=chill!5, minimum width=10cm,
         minimum height=0.8cm, font=\small] at (5, -2.2) {
-    Convergence across methods $=$ robust circuit identification
+    Circuit $\to$ validate $\to$ find what flows along the edges
   };
 \end{tikzpicture}
 \end{center}
@@ -508,9 +566,9 @@ $\Rightarrow$ Weight-space capacity vs.\ activation-flow distinction.
 \begin{frame}[plain,noframenumbering]
 \begin{center}
 \vfill
-  \fcolorbox{black}{white}{\parbox{0.65\textwidth}{\centering\vspace{0.8em}
-    {\Large\bfseries Part 3: Circuits}
-  \vspace{0.8em}}}
+  {\setlength{\fboxrule}{2.5pt}\fcolorbox{black}{white}{\parbox{0.7\textwidth}{\centering\vspace{0.8em}
+    {\Large\bfseries Part 3: Hypotheses}
+  \vspace{0.8em}}}}
 \vfill
 \end{center}
 \end{frame}
@@ -527,24 +585,29 @@ Prior finding: heads L0H8, L0H9, L0H11 participate in \emph{every} known circuit
 \begin{center}
 \begin{tikzpicture}[
   scale=0.75, transform shape,
-  layer/.style={draw, rounded corners=3pt, minimum height=0.6cm, font=\small,
+  layer/.style={draw, rounded corners=3pt, minimum height=0.7cm, font=\small,
                 minimum width=10cm, fill=chill!8},
-  head/.style={circle, draw, minimum size=0.55cm, font=\scriptsize, thick}
+  head/.style={circle, draw, minimum size=0.65cm, font=\scriptsize, thick}
 ]
   % Layers
-  \node[layer] (l11) at (0, 4) {Layer 11 --- Readout};
-  \node[layer] (l8) at (0, 3) {Layers 3--8 --- \textbf{Task-specific}};
-  \node[layer, fill=backbone!15] (l0) at (0, 2) {Layer 0 --- \textbf{Backbone}};
-  \node[layer, fill=accent!8] (emb) at (0, 1) {Token embeddings};
+  \node[layer] (l11) at (0, 5.5) {Layer 11 --- Readout};
+  \node[layer] (l8) at (0, 4.2) {Layers 3--8 --- \textbf{Task-specific}};
+  \node[layer, fill=backbone!15] (l0) at (0, 2.9) {Layer 0 --- \textbf{Backbone}};
+  \node[layer, fill=accent!8] (emb) at (0, 1.6) {Token embeddings};
 
-  % Backbone heads
-  \node[head, fill=backbone!30] at (-2, 2) {0.8};
-  \node[head, fill=backbone!30] at (0, 2) {0.9};
-  \node[head, fill=backbone!30] at (2, 2) {0.11};
+  % Backbone heads — below the layer label, between L0 and embeddings
+  \node[head, fill=backbone!30] (h8) at (-2.5, 2.2) {0.8};
+  \node[head, fill=backbone!30] (h9) at (0, 2.2) {0.9};
+  \node[head, fill=backbone!30] (h11) at (2.5, 2.2) {0.11};
+
+  % Arrows from embeddings up through heads
+  \draw[-{Stealth[length=2mm]}, thick, backbone!70] (emb) -- (l0);
+  \draw[-{Stealth[length=2mm]}, thick, black] (l0) -- (l8);
+  \draw[-{Stealth[length=2mm]}, thick, black] (l8) -- (l11);
 
   % Question
   \node[draw, dashed, rounded corners=4pt, fill=fusion!5, font=\small,
-        minimum width=8cm] at (0, -0.2) {
+        minimum width=8cm] at (0, 0.2) {
     \textbf{Prediction:} backbone appears in all 6 phonological circuits
   };
 \end{tikzpicture}
@@ -588,57 +651,50 @@ they are \textbf{a new circuit type} not identified in any prior work.
 \begin{frame}{Circuit overlap matrix}
 
 \begin{center}
-\begin{tikzpicture}[scale=0.65, transform shape]
-  % Matrix
-  \def\ops{{"1","2","3","4","5"}}
+\begin{tikzpicture}[
+  cell/.style={minimum width=1.6cm, minimum height=0.8cm, font=\footnotesize, align=center},
+  hdr/.style={font=\bfseries, minimum width=1.6cm, minimum height=0.8cm}
+]
+  % Column headers
+  \node[hdr] at (1.8, 0) {Op 1};
+  \node[hdr] at (3.4, 0) {Op 2};
+  \node[hdr] at (5.0, 0) {Op 3};
+  \node[hdr] at (6.6, 0) {Op 4};
+  \node[hdr] at (8.2, 0) {Op 5};
 
-  % Headers
-  \foreach \i in {0,...,4} {
-    \pgfmathparse{\ops[\i]}
-    \node[font=\small\bfseries] at (\i*1.5 + 1.5, 5) {Op \pgfmathresult};
-    \node[font=\small\bfseries] at (-0.5, 3.5 - \i*1.5) {Op \pgfmathresult};
-  }
+  % Row headers
+  \node[hdr, right] at (-0.3, -1) {Op 1};
+  \node[hdr, right] at (-0.3, -2) {Op 2};
+  \node[hdr, right] at (-0.3, -3) {Op 3};
+  \node[hdr, right] at (-0.3, -4) {Op 4};
+  \node[hdr, right] at (-0.3, -5) {Op 5};
 
-  % Diagonal
-  \foreach \i in {0,...,4} {
-    \fill[accent!30] (\i*1.5 + 0.8, 3.8 - \i*1.5) rectangle (\i*1.5 + 2.2, 3.2 - \i*1.5);
-    \node[font=\scriptsize] at (\i*1.5 + 1.5, 3.5 - \i*1.5) {---};
-  }
+  % Diagonal (self)
+  \fill[accent!30] (1.0,-0.6) rectangle (2.6,-1.4); \node[cell] at (1.8,-1) {---};
+  \fill[accent!30] (2.6,-1.6) rectangle (4.2,-2.4); \node[cell] at (3.4,-2) {---};
+  \fill[accent!30] (4.2,-2.6) rectangle (5.8,-3.4); \node[cell] at (5.0,-3) {---};
+  \fill[accent!30] (5.8,-3.6) rectangle (7.4,-4.4); \node[cell] at (6.6,-4) {---};
+  \fill[accent!30] (7.4,-4.6) rectangle (9.0,-5.4); \node[cell] at (8.2,-5) {---};
 
   % Expected high overlap (1-2: both name shortening)
-  \fill[circuit!25] (0.8 + 1.5, 3.8 - 0) rectangle (2.2 + 1.5, 3.2 - 0);
-  \node[font=\scriptsize, circuit] at (1.5 + 1.5, 3.5) {high?};
-  \fill[circuit!25] (0.8, 3.8 - 1.5) rectangle (2.2, 3.2 - 1.5);
-  \node[font=\scriptsize, circuit] at (1.5, 2.0) {high?};
+  \fill[circuit!25] (2.6,-0.6) rectangle (4.2,-1.4); \node[cell, circuit] at (3.4,-1) {high?};
+  \fill[circuit!25] (1.0,-1.6) rectangle (2.6,-2.4); \node[cell, circuit] at (1.8,-2) {high?};
 
-  % Expected low overlap (4 vs others)
-  \fill[phoneme!10] (0.8 + 4.5, 3.8 - 0) rectangle (2.2 + 4.5, 3.2 - 0);
-  \node[font=\scriptsize, chill] at (1.5 + 4.5, 3.5) {low?};
-  \fill[phoneme!10] (0.8, 3.8 - 4.5) rectangle (2.2, 3.2 - 4.5);
-  \node[font=\scriptsize, chill] at (1.5, -1.0) {low?};
-
-  % Fill rest with ?
-  \foreach \i in {0,...,4} {
-    \foreach \j in {0,...,4} {
-      \pgfmathtruncatemacro{\test}{\i == \j ? 1 : 0}
-      \ifnum\test=0
-        % Only fill if not already filled
-      \fi
-    }
-  }
+  % Expected low overlap (4 vs 1, 1 vs 4)
+  \fill[phoneme!10] (5.8,-0.6) rectangle (7.4,-1.4); \node[cell, black] at (6.6,-1) {low?};
+  \fill[phoneme!10] (1.0,-3.6) rectangle (2.6,-4.4); \node[cell, black] at (1.8,-4) {low?};
 
   % Legend
-  \fill[circuit!25] (9, 3.5) rectangle (9.5, 4);
-  \node[font=\scriptsize, right] at (9.6, 3.75) {Expected high overlap};
-  \fill[phoneme!10] (9, 2.5) rectangle (9.5, 3);
-  \node[font=\scriptsize, right] at (9.6, 2.75) {Expected low overlap};
-  \node[font=\scriptsize, right] at (9.6, 1.75) {Results pending};
+  \fill[circuit!25] (10, -0.8) rectangle (10.5, -1.2);
+  \node[font=\footnotesize, right] at (10.6, -1) {Expected high overlap};
+  \fill[phoneme!10] (10, -1.8) rectangle (10.5, -2.2);
+  \node[font=\footnotesize, right] at (10.6, -2) {Expected low overlap};
+  \node[font=\footnotesize, right] at (10.6, -3) {Results pending};
 \end{tikzpicture}
 \end{center}
 
 \vspace{0.3em}
-If Op 4 uses \emph{unique} heads not shared with any other operation:\\
-evidence for specialized phonological circuitry.
+If Op 4 uses \emph{unique} heads not shared with any other operation: evidence for specialized phonological circuitry.
 \end{frame}
 
 % =============================================
@@ -649,34 +705,33 @@ evidence for specialized phonological circuitry.
 
 \begin{center}
 \begin{tikzpicture}[
-  scale=0.8, transform shape,
-  test/.style={draw, rounded corners=4pt, minimum height=1.2cm, minimum width=3.5cm,
-               align=center, font=\small},
-  result/.style={font=\small, align=center},
-  arr/.style={-{Stealth[length=2mm]}, thick}
+  test/.style={draw, rounded corners=6pt, minimum height=2cm, minimum width=4.5cm,
+               align=center, font=\normalsize},
+  result/.style={font=\normalsize, align=center},
+  arr/.style={-{Stealth[length=3mm]}, very thick, black}
 ]
   % Tests
-  \node[test, fill=chill!10] (full) at (0, 2) {
-    \textbf{Full model}\\
-    {\scriptsize ``Richard Tater'' $\to$ ?}
+  \node[test, fill=chill!10] (full) at (0, 2.5) {
+    \textbf{Full model}\\[3pt]
+    ``Richard Tater'' $\to$ ?
   };
 
-  \node[test, fill=backbone!15] (abl1) at (5.5, 2) {
-    \textbf{Ablate Op 1}\\
-    {\scriptsize Remove hypocorism}\\
-    {\scriptsize circuit}
+  \node[test, fill=backbone!15] (abl1) at (5.5, 2.5) {
+    \textbf{Ablate Op 1}\\[3pt]
+    Remove hypocorism\\
+    circuit
   };
 
-  \node[test, fill=fusion!15] (abl4) at (11, 2) {
-    \textbf{Ablate Op 4}\\
-    {\scriptsize Remove oronym}\\
-    {\scriptsize circuit}
+  \node[test, fill=fusion!15] (abl4) at (11, 2.5) {
+    \textbf{Ablate Op 4}\\[3pt]
+    Remove oronym\\
+    circuit
   };
 
   % Expected results
-  \node[result, circuit] at (0, 0) {``Dictator'' $\checkmark$};
-  \node[result, phoneme] at (5.5, 0) {``Dictator'' $\times$\\{\scriptsize Richard $\nrightarrow$ Dick}};
-  \node[result, phoneme] at (11, 0) {``Dictator'' $\times$\\{\scriptsize Dick Tater $\nrightarrow$ fuse}};
+  \node[result, circuit] at (0, -0.2) {\large ``Dictator'' $\checkmark$};
+  \node[result, phoneme] at (5.5, -0.2) {\large ``Dictator'' $\times$\\[2pt] Richard $\nrightarrow$ Dick};
+  \node[result, phoneme] at (11, -0.2) {\large ``Dictator'' $\times$\\[2pt] Dick Tater $\nrightarrow$ fuse};
 
   \draw[arr] (full) -- (0, 0.6);
   \draw[arr] (abl1) -- (5.5, 0.6);
@@ -684,124 +739,736 @@ evidence for specialized phonological circuitry.
 \end{tikzpicture}
 \end{center}
 
-\vspace{0.5em}
-Each component circuit is \textbf{independently necessary}.
+\vspace{0.3em}
+{\large Each component circuit is \textbf{independently necessary}.}
 
-$\Rightarrow$ True compositional structure, not a single monolithic circuit.
+{\large $\to$ True compositional structure, not a single monolithic circuit.}
 \end{frame}
 
 % =============================================
-% PART 4 DIVIDER
+% RESULTS — CIRCUIT LOCALIZATION DIVIDER
 % =============================================
 \begin{frame}[plain,noframenumbering]
+\hypertarget{sl:results}{}
 \begin{center}
 \vfill
-  \fcolorbox{black}{white}{\parbox{0.65\textwidth}{\centering\vspace{0.8em}
-    {\Large\bfseries Part 4: Implications}
-  \vspace{0.8em}}}
+  {\setlength{\fboxrule}{2.5pt}\fcolorbox{black}{white}{\parbox{0.7\textwidth}{\centering\vspace{0.8em}
+    {\Large\bfseries Part 4: Circuit Localization}\\[4pt]
+    {\normalsize Which components matter?}
+  \vspace{0.8em}}}}
 \vfill
 \end{center}
 \end{frame}
 
 % =============================================
-% TOKENIZATION BOTTLENECK
+% BEHAVIORAL VALIDATION
 % =============================================
-\begin{frame}{Tokenization as computational bottleneck}
-\hypertarget{sl:tokenization}{}
+\begin{frame}{Behavioral validation: GPT-2 can do phonology}
+\hypertarget{sl:behavioral}{}
 
-\begin{center}
-\begin{tikzpicture}[
-  scale=0.8, transform shape,
-  box/.style={draw, rounded corners=4pt, minimum height=1.5cm, minimum width=4cm,
-              align=center, font=\small}
-]
-  \node[box, fill=circuit!10] (capacity) at (0, 0) {
-    \textbf{Weight-space}\\
-    \textbf{capacity}\\[3pt]
-    {\scriptsize Circuit exists in weights}\\
-    {\scriptsize (structural potential)}
-  };
+All six operations pass the 70\% accuracy gate on \href{https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf}{GPT-2} (Radford et al., 2019; 117M):
 
-  \node[box, fill=fusion!10] (flow) at (6, 0) {
-    \textbf{Activation-space}\\
-    \textbf{flow}\\[3pt]
-    {\scriptsize Circuit fires on input}\\
-    {\scriptsize (functional behavior)}
-  };
-
-  \node[box, fill=tok!15] (bottleneck) at (3, -2.5) {
-    \textbf{Tokenization}\\[3pt]
-    {\scriptsize BPE encoding}\\
-    {\scriptsize determines whether}\\
-    {\scriptsize capacity $\to$ flow}
-  };
-
-  \draw[-{Stealth[length=3mm]}, very thick, circuit] (capacity) -- (flow)
-    node[midway, above, font=\scriptsize\bfseries] {blocked?};
-  \draw[-{Stealth[length=2.5mm]}, thick, tok] (bottleneck) -- (3, -0.5);
-\end{tikzpicture}
-\end{center}
-
-\vspace{0.3em}
-If Op 4 accuracy improves with character-level input (slash condition),\\
-GPT-2 \emph{has} the circuit but BPE \emph{prevents it from firing}.
-\end{frame}
-
-% =============================================
-% DISCUSSION
-% =============================================
-\begin{frame}{What this tells us}
-\hypertarget{sl:discussion}{}
-
-\textbf{If the oronym circuit exists:}
-\begin{itemize}
-  \item GPT-2 learned cross-boundary phonological assembly from orthographic training alone
-  \item Phonological computation is not a single undifferentiated capability --- distinct operations use distinct circuits
-  \item The backbone ``operating system'' extends to phonology
-\end{itemize}
-
-\vspace{0.8em}
-\textbf{If it doesn't:}
-\begin{itemize}
-  \item Behavioral phonological performance (probes, PhonologyBench) may be statistical co-occurrence, not structured computation
-  \item The weight-capacity vs.\ activation-flow gap is real and measurable
-\end{itemize}
-
-\vspace{0.8em}
-Either outcome is a publishable finding.
-\end{frame}
-
-% =============================================
-% EXAMPLES
-% =============================================
-\begin{frame}{The dataset: selected examples}
-
+\vspace{0.5em}
 \begin{center}
 \small
-\begin{tabular}{lll}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{llccc}
 \toprule
-\textbf{Input} & \textbf{Target} & \textbf{Operation chain} \\
+\textbf{Op} & \textbf{Task} & \textbf{N} & \textbf{Accuracy} & \textbf{Mean logit diff} \\
 \midrule
-Richard Tater & Dictator & Op 1 + Op 4 \\
-William Ding & Building & Op 1 + Op 4 \\
-Elizabeth Aardvark & Lizard & Op 2 + Op 4 \\
-\midrule
-Bill Ding & Building & Op 4 only \\
-Curt Ain & Curtain & Op 4 only \\
-Brock Lee & Broccoli & Op 4 only \\
-Barb Dwyer & Barbed wire & Op 4 only \\
-\midrule
-Mike Rowave & Microwave & Op 7 (reverse) \\
-Dan Druff & Dandruff & Op 4 only \\
-Herb Ivore & Herbivore & Op 4 only \\
+1 & Hypocorism & 132 & 90.9\% & 1.67 \\
+2 & Clipping & 62 & 93.5\% & 1.80 \\
+3 & Initialism & 68 & 70.6\% & 0.58 \\
+\rowcolor{fusion!8}
+4 & \textbf{Oronym} & \textbf{104} & \textbf{73.1\%} & \textbf{1.26} \\
+5 & Homophone & 52 & 92.3\% & 2.78 \\
+7 & Folk etymology & 64 & 100.0\% & 3.21 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \vspace{0.5em}
-99 oronym pairs, 32 hypocorism pairs, 120 homophone pairs.
+Op 3 (initialism) is weakest --- letter-to-phoneme-name is the hardest regular rule.
 
-446 total minimal pairs across 6 operations.
+Op 7 (folk etymology) is perfect --- ``Mike Rowave'' $\to$ ``microwave'' is trivially compositional.
+
+\textbf{Conclusion:} GPT-2 has phonological knowledge we can circuit-hunt for.
+\end{frame}
+
+% =============================================
+% MARGIN DISTRIBUTIONS
+% =============================================
+\begin{frame}{Logit-diff margin distributions (1/2)}
+
+\begin{center}
+\includegraphics[width=0.75\textwidth,height=0.78\textheight,keepaspectratio]{figures/margin_top3.png}
+\end{center}
+
+\vspace{-0.3em}
+Not all examples are equally hard. Narrow-margin examples (shaded) are where circuit discovery matters most --- they distinguish genuine computation from statistical shortcuts.
+\end{frame}
+
+\begin{frame}{Logit-diff margin distributions (2/2)}
+
+\begin{center}
+\includegraphics[width=0.75\textwidth,height=0.78\textheight,keepaspectratio]{figures/margin_bottom3.png}
+\end{center}
+
+\vspace{-0.3em}
+Oronym has the highest hard-example rate among compositional tasks (38\%), confirming it requires genuine cross-token phoneme assembly rather than simple pattern matching.
+\end{frame}
+
+% =============================================
+% EAP-IG RESULTS
+% =============================================
+\begin{frame}{EAP-IG circuit discovery}
+\hypertarget{sl:eapresults}{}
+
+\small
+Ran \href{https://arxiv.org/abs/2310.10348}{edge attribution patching with integrated gradients} (EAP-IG; Syed et al., 2023) per task.
+
+\vspace{0.3em}
+\textbf{Quality:} all circuits are faithful (CMD $<$ 0.08, CPR $\approx$ 1.0).
+
+\vspace{0.5em}
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Op} & \textbf{Task} & \textbf{CMD $\downarrow$} & \textbf{CPR $\uparrow$} \\
+\midrule
+1 & Hypocorism & 0.018 & 1.006 \\
+2 & Clipping & 0.019 & 1.007 \\
+3 & Initialism & 0.060 & 1.043 \\
+\rowcolor{fusion!8}
+4 & \textbf{Oronym} & \textbf{0.047} & \textbf{1.006} \\
+5 & Homophone & 0.025 & 0.999 \\
+7 & Folk etymology & 0.072 & 1.063 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+{\footnotesize CMD = circuit minimality distance (lower = sparser, better).\\
+CPR = circuit precision-recall (1.0 = perfect; $>$1.0 = slight over-recovery is OK).}
+\end{frame}
+
+% =============================================
+% SUMMARY BARS
+% =============================================
+\begin{frame}{Summary across tasks}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{../results_modal/plots/summary_bars.png}
+\end{center}
+
+\vspace{-0.3em}
+{\small Left: behavioral accuracy (all $>$70\% gate). Center: CMD (all $<$0.08). Right: mean logit difference. Folk etymology is easiest; initialism is hardest.}
+\end{frame}
+
+% =============================================
+% TOP EDGES
+% =============================================
+\begin{frame}{What the circuits look like}
+
+\small
+Top attribution edges reveal shared structure across tasks:
+
+\vspace{0.5em}
+\begin{columns}[T]
+\begin{column}{0.47\textwidth}
+\textbf{Shared across all tasks:}
+\begin{itemize}
+  \item \texttt{input $\to$ m0}: token embeddings feed MLP-0 (highest score in 5/6 tasks)
+  \item \texttt{m0 $\to$ m1}: MLP-0 $\to$ MLP-1 chain
+  \item \texttt{a10.h10 $\to$ logits}: late readout
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{This is the backbone:} early MLPs and late attention heads appear in every phonological circuit.
+\end{column}
+
+\begin{column}{0.47\textwidth}
+\textbf{Task-specific differences:}
+\begin{itemize}
+  \item Op 1: \texttt{a10.h0}, \texttt{a10.h6} dominate (name movers?)
+  \item Op 4: \texttt{a9.h9} ranks high (cross-boundary fusion?)
+  \item Op 5: \texttt{a8.h11} is strongest non-MLP edge (phoneme identity?)
+  \item Op 7: \texttt{a10.h1} appears (creative composition?)
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Distinct mid-layer heads} per operation $\Rightarrow$ distinct circuits.
+\end{column}
+\end{columns}
+\end{frame}
+
+% =============================================
+% PART 6 DIVIDER
+% =============================================
+\begin{frame}[plain,noframenumbering]
+\hypertarget{sl:validation}{}
+\begin{center}
+\vfill
+  {\setlength{\fboxrule}{2.5pt}\fcolorbox{black}{white}{\parbox{0.7\textwidth}{\centering\vspace{0.8em}
+    {\Large\bfseries Part 6: Validation}\\[4pt]
+    {\normalsize Does the evidence hold up independently?}
+  \vspace{0.8em}}}}
+\vfill
+\end{center}
+\end{frame}
+
+% =============================================
+% CIRCUIT OVERLAP
+% =============================================
+\begin{frame}{Circuit overlap: shared backbone, distinct specialists}
+\hypertarget{sl:circuitoverlap}{}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{center}
+\textbf{Jaccard MDS}\\[4pt]
+\includegraphics[width=\textwidth]{../results_modal/plots/jaccard_mds.png}
+\end{center}
+{\scriptsize Tasks cluster by computational type. Op 1/5 (stored lookup) close together. Op 4 (oronym) separate.}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{center}
+\textbf{Edge overlap heatmap}\\[4pt]
+\includegraphics[width=\textwidth]{../results_modal/plots/overlap_heatmap.png}
+\end{center}
+{\scriptsize Fraction of top-200 edges shared between each task pair. High diagonal = self-overlap. Off-diagonal = shared backbone vs.\ unique heads.}
+\end{column}
+\end{columns}
+
+\vspace{0.3em}
+\textbf{Key finding:} operations share a common backbone but recruit \textbf{distinct specialist heads} in layers 8--10.
+\end{frame}
+
+% =============================================
+% FAITHFULNESS CURVES
+% =============================================
+\begin{frame}{Faithfulness: circuits recover full-model performance}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{../results_modal/plots/overlay_gpt2.png}
+\end{center}
+
+\vspace{-0.3em}
+{\small All six tasks reach $>$95\% of full-model performance with $<$5\% of edges.
+
+Sparse, faithful circuits exist for every phonological operation in GPT-2.}
+\end{frame}
+
+% =============================================
+% RESULTS — CAUSAL VARIABLE LOCALIZATION DIVIDER
+% =============================================
+\begin{frame}[plain,noframenumbering]
+\begin{center}
+\vfill
+  {\setlength{\fboxrule}{2.5pt}\fcolorbox{black}{white}{\parbox{0.7\textwidth}{\centering\vspace{0.8em}
+    {\Large\bfseries Part 5: Causal Variable Localization}\\[4pt]
+    {\normalsize What flows along the edges?}
+  \vspace{0.8em}}}}
+\vfill
+\end{center}
+\end{frame}
+
+% =============================================
+% CVL MOTIVATION
+% =============================================
+\begin{frame}{From circuits to causal variables}
+\hypertarget{sl:cvl}{}
+
+\small
+Circuit localization tells us \textbf{which} heads matter. But not \textbf{what} they communicate.
+
+\vspace{0.5em}
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.8, transform shape,
+  box/.style={draw, rounded corners=4pt, minimum height=1.5cm, minimum width=4.2cm,
+              align=center, font=\small},
+  arr/.style={-{Stealth[length=3mm]}, very thick}
+]
+  \node[box, fill=accent!10] (cl) at (0, 0) {
+    \textbf{Circuit Localization}\\[3pt]
+    {\scriptsize ``Head 9.9 matters}\\
+    {\scriptsize for oronym task''}
+  };
+
+  \node[box, fill=fusion!10] (cvl) at (7, 0) {
+    \textbf{Causal Variable}\\
+    \textbf{Localization}\\[3pt]
+    {\scriptsize ``Layer 9 encodes the fused}\\
+    {\scriptsize phoneme in a 1D subspace''}
+  };
+
+  \draw[arr, circuit] (cl) -- (cvl)
+    node[midway, above, font=\scriptsize\bfseries] {DAS / IIA};
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5em}
+\textbf{Method:} \href{https://arxiv.org/abs/2303.02536}{Distributed Alignment Search} (DAS; Geiger et al., 2024) --- find a linear subspace in the residual stream at each layer that encodes a specific causal variable (e.g., the target phoneme).
+
+\vspace{0.3em}
+\textbf{Metric:} Interchange Intervention Accuracy (IIA) --- swap the subspace between two inputs and check if the output changes as predicted.
+\end{frame}
+
+% =============================================
+% CAUSAL VARIABLES
+% =============================================
+\begin{frame}{Causal variables for phonological tasks}
+
+\small
+Each operation implies a different causal variable:
+
+\vspace{0.5em}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+\textbf{Op} & \textbf{Task} & \textbf{Causal variable} \\
+\midrule
+1 & Hypocorism & Nickname identity (Richard $\to$ Dick) \\
+2 & Clipping & First-syllable boundary position \\
+3 & Initialism & Letter $\to$ phoneme name mapping \\
+\rowcolor{fusion!8}
+4 & \textbf{Oronym} & \textbf{Fused phoneme string (cross-boundary)} \\
+5 & Homophone & Phoneme identity across spellings \\
+7 & Folk etymology & Decomposition boundaries \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+\textbf{Key question:} does layer 9 encode the \emph{fused phoneme string} for oronyms in a linear subspace?
+
+If IIA is high on the oronym circuit heads but low elsewhere $\Rightarrow$ the circuit is \textbf{causally} responsible, not just correlated.
+\end{frame}
+
+% =============================================
+% DAS RESULTS (PLACEHOLDER)
+% =============================================
+\begin{frame}{DAS results}
+\hypertarget{sl:dasresults}{}
+
+\begin{center}
+\vfill
+\begin{tikzpicture}
+  \node[draw, dashed, rounded corners=8pt, fill=chill!5, minimum width=10cm,
+        minimum height=3cm, align=center, font=\large] {
+    \textbf{Experiments in progress}\\[8pt]
+    {\normalsize DAS training on circuit heads identified by EAP-IG}\\[4pt]
+    {\normalsize IIA evaluation per causal variable per task}
+  };
+\end{tikzpicture}
+\vfill
+\end{center}
+
+\vspace{0.3em}
+\small
+\textbf{Plan:} train rank-1 DAS probes at each layer per task. If layer 9 encodes the fused phoneme string in a direction (IIA $>$ 0.5), that is the first demonstration of \textbf{causal phonological subspaces} in a transformer.
+\end{frame}
+
+% =============================================
+% IMPLICATIONS DIVIDER
+% =============================================
+\begin{frame}[plain,noframenumbering]
+\begin{center}
+\vfill
+  {\setlength{\fboxrule}{2.5pt}\fcolorbox{black}{white}{\parbox{0.7\textwidth}{\centering\vspace{0.8em}
+    {\Large\bfseries Part 7: Implications}
+  \vspace{0.8em}}}}
+\vfill
+\end{center}
+\end{frame}
+
+% =============================================
+% FUTURE WORK
+% =============================================
+\begin{frame}{Future work}
+\hypertarget{sl:tokenization}{}
+
+\textbf{1. Logit lens --- when does the nickname emerge?}
+\begin{itemize}
+  \item Unembed the residual stream at each layer, track when the target token enters the top-$k$
+  \item If ``Dictator'' jumps into top predictions at layer 9--10, that's convergent evidence with the circuit localization
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{2. Tokenization as bottleneck}
+
+\begin{minipage}{0.55\textwidth}
+\begin{itemize}
+  \item BPE splits names unpredictably --- does the circuit still fire when the phoneme boundary falls mid-token?
+  \item Compare character-level vs.\ BPE tokenization on the same names
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}{0.38\textwidth}
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.55, transform shape,
+  box/.style={draw, rounded corners=3pt, minimum height=1cm, minimum width=2.5cm,
+              align=center, font=\scriptsize}
+]
+  \node[box, fill=circuit!10] (cap) at (0, 0) {\textbf{Capacity}\\{\tiny (in weights)}};
+  \node[box, fill=fusion!10] (flow) at (4, 0) {\textbf{Behavior}\\{\tiny (on input)}};
+  \node[box, fill=tok!15] (bpe) at (2, -1.8) {\textbf{BPE}\\{\tiny blocks?}};
+  \draw[-{Stealth[length=2mm]}, thick, circuit] (cap) -- (flow);
+  \draw[-{Stealth[length=1.5mm]}, thick, tok] (bpe) -- (2, -0.3);
+\end{tikzpicture}
+\end{center}
+\end{minipage}
+
+\vspace{0.5em}
+\textbf{3. Novel-name generalization}
+\begin{itemize}
+  \item Test on names guaranteed absent from GPT-2's training data
+  \item If the circuit generalizes, it's compositional computation --- not memorization
+\end{itemize}
+\end{frame}
+
+% =============================================
+% DISCUSSION: CAUSAL ABSTRACTION
+% =============================================
+\begin{frame}{Causal abstraction: what are we claiming? {\scriptsize(\href{https://arxiv.org/abs/2106.02997}{Geiger et al., 2021})}}
+\hypertarget{sl:discussion}{}
+
+\begin{columns}[c]
+\begin{column}{0.42\textwidth}
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.75, transform shape,
+  abox/.style={draw, rounded corners=3pt, minimum width=2.8cm, minimum height=0.8cm,
+               align=center, font=\footnotesize},
+  arr/.style={-{Stealth[length=2mm]}, thick},
+]
+  % Low-level transformer (LEFT)
+  \node[abox, fill=chill!15] (emb) at (0, 4) {Embeddings};
+  \node[abox, fill=circuit!15] (h1) at (-1.5, 2.5) {Head 9.1};
+  \node[abox, fill=circuit!15] (h2) at (1.5, 2.5) {Head 10.10};
+  \node[abox, fill=chill!15] (logit) at (0, 1) {Logits};
+
+  \draw[arr] (emb) -- (h1);
+  \draw[arr] (emb) -- (h2);
+  \draw[arr] (h1) -- (logit);
+  \draw[arr] (h2) -- (logit);
+
+  \node[font=\footnotesize\bfseries, circuit] at (0, 5) {Transformer circuit};
+  \node[font=\scriptsize, chill] at (0, 4.6) {(what we measure)};
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.16\textwidth}
+\begin{center}
+\begin{tikzpicture}
+  \draw[{Stealth[length=4mm]}-{Stealth[length=4mm]}, ultra thick, backbone!80, decorate,
+        decoration={snake, amplitude=1.5mm, segment length=5mm}]
+        (-1.2, 0) -- (1.2, 0);
+  \node[font=\small\bfseries] at (0, 0.5) {aligns?};
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.42\textwidth}
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.75, transform shape,
+  abox/.style={draw, rounded corners=3pt, minimum width=2.8cm, minimum height=0.8cm,
+               align=center, font=\footnotesize},
+  arr/.style={-{Stealth[length=2mm]}, thick},
+]
+  % High-level causal model (RIGHT)
+  \node[abox, fill=accent!15] (name) at (0, 4) {Full name};
+  \node[abox, fill=fusion!15] (clip) at (-1.5, 2.5) {Clip};
+  \node[abox, fill=fusion!15] (fuse) at (1.5, 2.5) {Fuse};
+  \node[abox, fill=phoneme!15] (out) at (0, 1) {Nickname};
+
+  \draw[arr] (name) -- (clip);
+  \draw[arr] (name) -- (fuse);
+  \draw[arr] (clip) -- (out);
+  \draw[arr] (fuse) -- (out);
+
+  \node[font=\footnotesize\bfseries, accent] at (0, 5) {High-level causal model};
+  \node[font=\scriptsize, chill] at (0, 4.6) {(what we think happens)};
+\end{tikzpicture}
+\end{center}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\textbf{IOI:} we \emph{expect} GPT-2 to track indirect objects --- the alignment is unsurprising.\\[3pt]
+\textbf{Phonology:} GPT-2 was trained on text, never heard speech. If the alignment holds, this is a \emph{surprising generalization} --- phonological computation emerged from orthographic co-occurrence data alone.
+\end{frame}
+
+% =============================================
+\begin{frame}{What is a ``mechanism''? Our hypothesis}
+\hypertarget{sl:mechanism}{}
+
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.85, transform shape,
+  level/.style={draw, rounded corners=4pt, minimum width=3.2cm, minimum height=1cm,
+                align=center, font=\small},
+  arr/.style={-{Stealth[length=2mm]}, thick, black},
+]
+  % Levels of description
+  \node[level, fill=phoneme!12] (neuron) at (0, 0) {
+    \textbf{Individual neurons}\\[-2pt]
+    {\scriptsize polysemantic, superposition}
+  };
+  \node[level, fill=backbone!12] (head) at (0, 2) {
+    \textbf{Attention heads}\\[-2pt]
+    {\scriptsize multiple roles per head}
+  };
+  \node[level, fill=circuit!12] (circuit) at (0, 4) {
+    \textbf{Circuits}\\[-2pt]
+    {\scriptsize task-specific subgraphs}
+  };
+  \node[level, fill=fusion!12] (subspace) at (0, 6) {
+    \textbf{Linear subspaces}\\[-2pt]
+    {\scriptsize causal variables via DAS}
+  };
+
+  \draw[arr] (neuron) -- (head) node[midway, right, font=\scriptsize, xshift=3pt, black] {aggregate};
+  \draw[arr] (head) -- (circuit) node[midway, right, font=\scriptsize, xshift=3pt, black] {compose};
+  \draw[arr] (circuit) -- (subspace) node[midway, right, font=\scriptsize, xshift=3pt, black] {abstract};
+
+  % Annotations on left
+  \node[font=\scriptsize\bfseries, text width=3.5cm, align=right, phoneme] at (-4, 0) {
+    Neuron 4217 fires for ``ck'' bigrams --- but also for prices and dates
+  };
+  \node[font=\scriptsize\bfseries, text width=3.5cm, align=right, backbone] at (-4, 2) {
+    Head 10.10 does oronym fusion \emph{and} participates in 3 other tasks
+  };
+  \node[font=\scriptsize\bfseries, text width=3.5cm, align=right, circuit] at (-4, 4) {
+    The oronym circuit: specific edges, faithful ablation profile
+  };
+  \node[font=\scriptsize\bfseries, text width=3.5cm, align=right, fusion] at (-4, 6) {
+    A direction in $\mathbb{R}^{768}$ at layer 9 that encodes ``fused phoneme''
+  };
+
+  \draw[dotted, black] (-2, 0) -- (neuron.west);
+  \draw[dotted, black] (-2, 2) -- (head.west);
+  \draw[dotted, black] (-2, 4) -- (circuit.west);
+  \draw[dotted, black] (-2, 6) -- (subspace.west);
+
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3em}
+No single level is ``the mechanism.'' Each level answers a different question ---
+and each has known failure modes (superposition, polysemanticity, multiple roles).
+\end{frame}
+
+% =============================================
+\begin{frame}{The cognitive science parallel}
+\hypertarget{sl:cogsci}{}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\textbf{Double dissociation} (Shallice, 1988):
+\begin{itemize}
+  \item Lesion region A $\Rightarrow$ lose ability X, keep Y
+  \item Lesion region B $\Rightarrow$ keep X, lose Y
+  \item Strong evidence for modularity
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{What we find:}
+\begin{itemize}
+  \item Ablate head 10.10 $\Rightarrow$ oronym breaks, hypocorism survives
+  \item Ablate head 9.1 $\Rightarrow$ hypocorism breaks, oronym survives
+  \item \textcolor{circuit}{Double dissociation across 6 tasks}
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{But dissociation $\neq$ understanding:}
+\begin{itemize}
+  \item A calculator dissociates $+$ from $\times$ --- nobody calls that ``understanding addition''
+  \item The question: is phonological assembly \emph{compositional computation} or \emph{lookup}?
+  \item Novel names (unseen in training) are the critical test
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{What would change our mind:}
+\begin{itemize}
+  \item[\textcolor{circuit}{$\checkmark$}] Clean dissociations {\scriptsize (have this)}
+  \item[\textcolor{circuit}{$\checkmark$}] Faithful circuits {\scriptsize (have this)}
+  \item[\textcolor{backbone}{?}] DAS subspaces {\scriptsize (running)}
+  \item[\textcolor{phoneme}{$\times$}] Novel-name generalization {\scriptsize (future)}
+\end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+% =============================================
+\begin{frame}{Limitation 1: circuits are a wiring diagram, not a content map}
+\hypertarget{sl:tooling}{}
+
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.8, transform shape,
+  nd/.style={draw, circle, minimum size=1cm, align=center, font=\footnotesize},
+  arr/.style={-{Stealth[length=2mm]}, thick},
+]
+  % What we get
+  \node[nd, fill=circuit!15] (a) at (0, 0) {9.1};
+  \node[nd, fill=circuit!15] (b) at (3, 0) {10.10};
+  \node[nd, fill=chill!15] (c) at (6, 0) {logits};
+  \draw[arr] (a) -- (b) node[midway, above, font=\scriptsize] {important edge};
+  \draw[arr] (b) -- (c) node[midway, above, font=\scriptsize] {important edge};
+
+  \node[font=\footnotesize\bfseries, circuit] at (3, 1.2) {What EAP tells us};
+  \node[font=\footnotesize, black] at (3, -0.9) {``These edges matter for the oronym task''};
+
+  % What we don't get
+  \node[font=\footnotesize\bfseries, phoneme] at (3, -2) {What EAP \emph{doesn't} tell us};
+  \node[font=\footnotesize, black, text width=9cm, align=center] at (3, -2.8) {
+    What information is flowing along each edge?
+    Is it the phoneme? The syllable boundary? The token position?
+  };
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3em}
+\begin{itemize}
+  \item EAP and activation patching find \emph{which} heads matter --- not \emph{what} they compute
+  \item A single head can serve multiple roles across tasks (head 10.10 appears in 4 circuits)
+  \item We need methods that decompose \emph{within} an edge: what subspace of the residual stream carries the phonological signal from one head to the next?
+\end{itemize}
+\end{frame}
+
+% =============================================
+\begin{frame}{Limitation 2: the nonlinear representation dilemma}
+
+\textbf{The dilemma} (\href{https://arxiv.org/abs/2507.08802}{Sutter et al., NeurIPS 2025}):
+
+\vspace{0.3em}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+With \emph{unrestricted} nonlinear alignment maps:
+\begin{itemize}
+  \item \textbf{Any} model maps to \textbf{any} algorithm
+  \item Even \emph{randomly initialized} GPT-2 achieves 100\% IIA on IOI
+  \item Causal abstraction becomes vacuous
+\end{itemize}
+
+\vspace{0.3em}
+DAS avoids this by restricting to \emph{linear} maps --- but that might miss real nonlinear structure.
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{A possible way forward:}
+\begin{itemize}
+  \item Use \emph{restricted} nonlinear maps --- constrained enough to be informative, flexible enough to find curved representations
+  \item The constraint is what gives causal abstraction its power --- the question is finding the right constraint
+\end{itemize}
+
+\vspace{0.3em}
+If DAS finds high IIA with linear maps, that's meaningful \emph{because} we constrained ourselves. $\Rightarrow$ We are exploring restricted nonlinear maps in parallel work.
+\end{column}
+\end{columns}
+\end{frame}
+
+% =============================================
+\begin{frame}{Limitation 3: we assume the causal graph, we don't discover it}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\textbf{What we do now:}
+\begin{itemize}
+  \item We \emph{hypothesize} a causal model (name $\to$ clip $\to$ fuse $\to$ nickname)
+  \item Then test whether the transformer aligns with it
+  \item But what if the model uses a completely different causal structure?
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{The gap:}\\
+We test alignment to \emph{our} hypothesis. We never ask: what causal graph does the model \emph{actually} implement?
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\textbf{Causal discovery algorithms:}
+\begin{itemize}
+  \item The \href{https://mitpress.mit.edu/9780262194440/causation-prediction-and-search/}{PC algorithm} (Spirtes et al., 2000), FCI, and others can \emph{infer} causal graphs from observational data
+  \item In principle: intervene on heads/subspaces, observe downstream effects, let the algorithm discover the DAG
+  \item Relatively unexplored in MI --- graph is pre-determined
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Open question:}\\
+Can we discover the model's causal structure from activation data, rather than imposing ours? This would let the model tell us what operations it performs --- not just confirm or deny our guesses.
+\end{column}
+\end{columns}
+\end{frame}
+
+\hypertarget{sl:causaldiscovery}{}
+\begin{frame}{Causal discovery: do the algorithms agree?}
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\textbf{Setup:}
+\begin{itemize}
+  \item Top-30 heads by activation variance (clean vs.\ corrupted)
+  \item Per-head activation norms at last token
+  \item Two algorithms run independently:
+  \begin{itemize}
+    \item \textbf{PC}: conditional independence only
+    \item \textbf{CD-NOD} (\href{https://www.jmlr.org/papers/v21/19-232.html}{Huang et al., 2020}): exploits clean/corrupted distribution shift to orient edges
+  \end{itemize}
+\end{itemize}
+
+\vspace{0.3em}
+\textbf{Result: 96--100\% agreement.}\\
+CD-NOD's extra signal adds almost nothing --- conditional independence alone finds the graph.
+\end{column}
+
+\begin{column}{0.53\textwidth}
+\includegraphics[width=\textwidth]{figures/causal_discovery_agreement.png}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Causal discovery: hub heads across tasks}
+
+\begin{columns}[T]
+\begin{column}{0.40\textwidth}
+\includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/causal_discovery_hub_heads.png}
+\end{column}
+
+\begin{column}{0.53\textwidth}
+\textbf{Universal hubs} (all 6 tasks):\\[0.2em]
+\texttt{a11.h0} (sink) and \texttt{a11.h1} (source) --- same heads EAP identifies as circuit-critical
+
+\vspace{0.3em}
+\textbf{Layer distribution:}\\
+21/22 hub heads are in layers 8--11. Early heads appear only in task-specific edges, never as hubs.
+
+\vspace{0.3em}
+\textbf{Recurring edge:}\\
+\texttt{a8.h11} $\to$ \texttt{a10.h7} in 3/6 tasks
+
+\vspace{0.3em}
+\textbf{Source vs.\ sink structure:}\\
+\small
+\begin{tabular}{lll}
+Hypo: & \texttt{a10.h10} $\to$ 8 heads & 10 $\to$ \texttt{a10.h0} \\
+Clip: & \texttt{a11.h6} $\to$ 8 heads & 8 $\to$ \texttt{a7.h0} \\
+Oron: & \texttt{a11.h8} $\to$ 6 heads & 10 $\to$ \texttt{a10.h7} \\
+\end{tabular}
+
+\vspace{0.3em}
+\textbf{Implication:} the causal graph we hypothesized aligns with what the algorithms discover independently.
+\end{column}
+\end{columns}
 \end{frame}
 
 % =============================================
@@ -815,15 +1482,16 @@ Herb Ivore & Herbivore & Op 4 only \\
 \toprule
 \textbf{Component} & \textbf{Status} & \textbf{Next step} \\
 \midrule
-Paper outline & Complete & --- \\
-6 operation definitions & Complete & --- \\
-Minimal-pair datasets & Designed & Build \& audit tokenization \\
-Behavioral validation & Pending & Run on GPT-2 S/M/L \\
-EAP discovery & Pending & Run per-operation \\
-Activation patching & Pending & Validate EAP rankings \\
-Weight-space prediction & Pending & Cross-reference \\
-Compositional ablation & Pending & After circuit ID \\
-Tokenization experiment & Pending & Slash-condition test \\
+Paper outline & \textcolor{circuit}{Complete} & --- \\
+6 operation definitions & \textcolor{circuit}{Complete} & --- \\
+Minimal-pair datasets & \textcolor{circuit}{Complete} & 446 pairs across 6 ops \\
+Behavioral validation & \textcolor{circuit}{Complete} & All 6 ops $>$70\% accuracy \\
+EAP-IG circuit discovery & \textcolor{circuit}{Complete} & All circuits faithful \\
+\midrule
+Activation patching & \textcolor{backbone}{Next} & Validate EAP rankings \\
+Compositional ablation & \textcolor{backbone}{Next} & Compound pun experiments \\
+Tokenization experiment & \textcolor{backbone}{Next} & Slash-condition test \\
+Weight-space features & Planned & Cross-reference circuits \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -848,12 +1516,6 @@ Target venue: COLM, Findings of ACL, or MI workshop.
 \textbf{Contact:} \texttt{elliot@elliottower.ai}
 
 \vspace{1.5em}
-
-\rule{0.3\textwidth}{0.2pt}
-
-\vspace{1em}
-
-{\small \textit{``Bill Ding'' $\to$ ``building''}}
 
 \vfill
 \end{center}
