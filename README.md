@@ -6,7 +6,7 @@ We identify circuits for six phonological operations (hypocorism, clipping, init
 
 ## Slides
 
-**[Slides](slides/phonetic_circuits_slides.pdf)** ([LaTeX source](slides/phonetic_circuits_slides.tex)) — 45 slides covering circuit localization, causal variable localization, and validation.
+**[Phonological Assembly Circuits in GPT-2: How Transformers Compute Sound Structure from Orthography](slides/phonetic_circuits_slides.pdf)** ([LaTeX source](slides/phonetic_circuits_slides.tex)) — 45 slides covering circuit localization, causal variable localization, and validation.
 
 To compile:
 ```bash
@@ -25,7 +25,7 @@ pdflatex phonetic_circuits_slides.tex
 | `datasets/op3_initialism.csv` | Initialism | 68 | J → Jay (grapheme → phoneme name) |
 | `datasets/op4_oronym.csv` | Oronym | 104 | Bill Ding → building (cross-boundary fusion) |
 | `datasets/op5_homophone.csv` | Homophone | 52 | Neil → kneel (phoneme-identity detection) |
-| `datasets/op7_folk_etym.csv` | Folk etymology | 64 | microwave → Michael Wave (reverse decomposition) |
+| `datasets/op6_folk_etym.csv` | Folk etymology | 64 | microwave → Michael Wave (reverse decomposition) |
 
 All datasets are manually curated. See `datasets/MANUALLY_CURATED_EXAMPLES.md` for construction notes.
 
@@ -79,6 +79,7 @@ uv run python -m lib.behavioral_validation --device cpu
 - Geiger et al. (2024). [Finding Alignments Between Interpretable Causal Variables and Distributed Neural Representations](https://arxiv.org/abs/2303.02536) — DAS
 - Spirtes et al. (2000). *Causation, Prediction, and Search* — PC algorithm
 - Warstadt et al. (2020). [BLiMP](https://arxiv.org/abs/1912.00582) — minimal-pair evaluation format
+- MIB (TODO)  also should we not just have a thing saying that this repo actively uses blimp pc algorithm all the other algorithims and implementaitons from other software and like just the softeware it uses and the references it has so clean this up 
 
 ## License
 

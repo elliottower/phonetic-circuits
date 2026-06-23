@@ -206,12 +206,12 @@ How? Which heads? Is there a dedicated circuit?
 \toprule
 \textbf{Op} & \textbf{Linguistic term} & \textbf{Example} & \textbf{Computation} & \textbf{N} \\
 \midrule
-1 & Rhyming hypocorism & Richard $\to$ Dick & Irregular stored lookup & 32 \\
+1 & Rhyming hypocorism & Robert $\to$ Bob & Irregular stored lookup & 32 \\
 2 & Clipping (apocope) & Timothy $\to$ Tim & First-syllable truncation & 90 \\
 3 & Initialism & J $\to$ Jay & Grapheme $\to$ phoneme name & 30 \\
 4 & \textbf{Oronym} & \textbf{Bill Ding $\to$ building} & \textbf{Cross-boundary fusion} & \textbf{99} \\
 5 & Homophone & Neil $\to$ kneel & Phoneme-identity detection & 120 \\
-6 & Folk etymology & microwave $\to$ Michael Wave & Reverse decomposition & 75 \\
+6 & Folk etymology & curtain $\to$ Curt & Reverse decomposition & 75 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -251,12 +251,12 @@ $\to$ Predicts \textbf{distinct circuit architectures}.
   \node[op, fill=fusion!15] (op6) at (10, -0.3) {Op 6\\Folk etymology};
 
   % Examples
-  \node[font=\scriptsize\itshape, below=0.15cm of op1] {Richard $\to$ Dick};
+  \node[font=\scriptsize\itshape, below=0.15cm of op1] {Robert $\to$ Bob};
   \node[font=\scriptsize\itshape, below=0.15cm of op5] {Neil $\to$ kneel};
   \node[font=\scriptsize\itshape, below=0.15cm of op2] {Timothy $\to$ Tim};
   \node[font=\scriptsize\itshape, below=0.15cm of op3] {J $\to$ Jay};
   \node[font=\scriptsize\itshape, below=0.15cm of op4] {Bill Ding $\to$ building};
-  \node[font=\scriptsize\itshape, below=0.15cm of op6] {microwave $\to$ Michael Wave};
+  \node[font=\scriptsize\itshape, below=0.15cm of op6] {curtain $\to$ Curt};
 
   % Difficulty arrow
   \draw[arr, very thick, black] (0, -1.8) -- (10, -1.8)
@@ -331,7 +331,7 @@ composing phonemes from both ``Bill'' and ``Ding'' into ``building.''
 % =============================================
 % COMPOUND PUNS
 % =============================================
-\begin{frame}{Chained operations: composing circuits}
+\begin{frame}{Chained operations: shorten + fusion}
 
 \begin{center}
 \begin{tikzpicture}[
@@ -342,48 +342,172 @@ composing phonemes from both ``Bill'' and ``Ding'' into ``building.''
                 fill=chill!15, minimum width=1.5cm},
   arr/.style={-{Stealth[length=2.5mm]}, thick}
 ]
-  % Richard Tater -> Dictator
-  \node[box, fill=accent!10] (richard) at (0, 2) {Richard};
-  \node[box, fill=accent!10] (tater) at (3.5, 2) {Tater};
+  % William Ding -> Building
+  \node[box, fill=accent!10] (william) at (0, 2) {William};
+  \node[box, fill=accent!10] (ding) at (3.5, 2) {Ding};
 
   \node[opbox, fill=backbone!20] (op1a) at (0, 0.8) {Op 1};
-  \node[box, fill=backbone!10] (dick) at (0, -0.3) {Dick};
+  \node[box, fill=backbone!10] (bill) at (0, -0.3) {Bill};
 
   \node[opbox, fill=fusion!20] (op4a) at (1.75, -1.5) {Op 4};
-  \node[box, fill=circuit!15, minimum width=2.5cm] (dictator) at (1.75, -2.7) {\textbf{Dictator}};
+  \node[box, fill=circuit!15, minimum width=2.5cm] (building) at (1.75, -2.7) {\textbf{Building}};
 
-  \draw[arr] (richard) -- (op1a);
-  \draw[arr] (op1a) -- (dick);
-  \draw[arr] (dick) -- (op4a);
-  \draw[arr] (tater) |- (op4a);
-  \draw[arr] (op4a) -- (dictator);
+  \draw[arr] (william) -- (op1a);
+  \draw[arr] (op1a) -- (bill);
+  \draw[arr] (bill) -- (op4a);
+  \draw[arr] (ding) |- (op4a);
+  \draw[arr] (op4a) -- (building);
 
-  % Michael Pencil -> Mike Pence
-  \node[box, fill=accent!10] (michael) at (7.5, 2) {Michael};
-  \node[box, fill=accent!10] (pencil) at (11, 2) {Pencil};
+  % Richard Tater -> Dictator
+  \node[box, fill=accent!10] (richard) at (7.5, 2) {Richard};
+  \node[box, fill=accent!10] (tater) at (11, 2) {Tater};
 
   \node[opbox, fill=backbone!20] (op1b) at (7.5, 0.8) {Op 1};
-  \node[box, fill=backbone!10] (mike) at (7.5, -0.3) {Mike};
+  \node[box, fill=backbone!10] (dick) at (7.5, -0.3) {Dick};
 
-  \node[opbox, fill=accent!20] (op2b) at (9.25, -1.5) {Op 2};
-  \node[box, fill=circuit!15, minimum width=2.5cm] (mikepence) at (9.25, -2.7) {\textbf{Mike Pence}};
+  \node[opbox, fill=fusion!20] (op4b) at (9.25, -1.5) {Op 4};
+  \node[box, fill=circuit!15, minimum width=2.5cm] (dictator) at (9.25, -2.7) {\textbf{Dictator}};
 
-  \draw[arr] (michael) -- (op1b);
-  \draw[arr] (op1b) -- (mike);
-  \draw[arr] (mike) -- (op2b);
-  \draw[arr] (pencil) |- (op2b);
-  \draw[arr] (op2b) -- (mikepence);
+  \draw[arr] (richard) -- (op1b);
+  \draw[arr] (op1b) -- (dick);
+  \draw[arr] (dick) -- (op4b);
+  \draw[arr] (tater) |- (op4b);
+  \draw[arr] (op4b) -- (dictator);
 
   % Labels
   \node[font=\scriptsize\itshape, chill] at (1.75, -3.5) {Op 1 + Op 4};
-  \node[font=\scriptsize\itshape, chill] at (9.25, -3.5) {Op 1 + Op 2};
+  \node[font=\scriptsize\itshape, chill] at (9.25, -3.5) {Op 1 + Op 4};
 \end{tikzpicture}
 \end{center}
 
 \vspace{0.3em}
-\textbf{Compositionality test:} ablate Op 1 circuit $\Rightarrow$ compound breaks, Op 4 survives.
+\textbf{Prediction:} each sub-circuit is independently necessary. Knock out Op 1 $\Rightarrow$ the shortening fails, but standalone oronyms (Bill Ding) still work. Knock out Op 4 $\Rightarrow$ fusion fails, but standalone hypocorisms (William $\to$ Bill) still work.
+\end{frame}
 
-Ablate Op 4 circuit $\Rightarrow$ compound breaks, Op 1 survives.
+% =============================================
+\begin{frame}{Chained operations: double shortening}
+
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.75, transform shape,
+  box/.style={draw, rounded corners=4pt, minimum height=0.8cm, font=\small,
+              minimum width=1.6cm, align=center},
+  opbox/.style={draw, rounded corners=2pt, minimum height=0.5cm, font=\scriptsize,
+                fill=chill!15, minimum width=1.3cm},
+  arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % Charles Education Cheese -> Chuck E. Cheese
+  \node[box, fill=accent!10] (charles) at (0, 2.5) {Charles};
+  \node[box, fill=accent!10] (education) at (2.5, 2.5) {Education};
+  \node[box, fill=accent!10] (cheese) at (5, 2.5) {Cheese};
+
+  \node[opbox, fill=backbone!20] (op1a) at (0, 1.2) {Op 1};
+  \node[opbox, fill=accent!20] (op3a) at (2.5, 1.2) {Op 3};
+
+  \node[box, fill=backbone!10, minimum width=1.3cm] (chuck) at (0, -0.1) {Chuck};
+  \node[box, fill=backbone!10, minimum width=1.3cm] (ee) at (2.5, -0.1) {E.};
+
+  \node[box, fill=circuit!15, minimum width=4cm] (cec) at (2.5, -1.8) {\textbf{Chuck E. Cheese}};
+
+  \draw[arr] (charles) -- (op1a);
+  \draw[arr] (op1a) -- (chuck);
+  \draw[arr] (education) -- (op3a);
+  \draw[arr] (op3a) -- (ee);
+  \draw[arr] (chuck) -- (cec);
+  \draw[arr] (ee) -- (cec);
+  \draw[arr] (cheese) -- (5, -0.1) -- (cec);
+
+  \node[font=\scriptsize\itshape, chill] at (2.5, -2.7) {Op 1 + Op 3};
+
+  % Michael Pencil -> Mike Pence
+  \node[box, fill=accent!10] (michael) at (8, 2.5) {Michael};
+  \node[box, fill=accent!10] (pencil) at (11.5, 2.5) {Pencil};
+
+  \node[opbox, fill=backbone!20] (op1b) at (8, 1.2) {Op 1};
+  \node[opbox, fill=accent!20] (op2b) at (11.5, 1.2) {Op 2};
+
+  \node[box, fill=backbone!10, minimum width=1.3cm] (mike) at (8, -0.1) {Mike};
+  \node[box, fill=backbone!10, minimum width=1.3cm] (pence) at (11.5, -0.1) {Pence};
+
+  \node[box, fill=circuit!15, minimum width=3cm] (mikepence) at (9.75, -1.8) {\textbf{Mike Pence}};
+
+  \draw[arr] (michael) -- (op1b);
+  \draw[arr] (op1b) -- (mike);
+  \draw[arr] (pencil) -- (op2b);
+  \draw[arr] (op2b) -- (pence);
+  \draw[arr] (mike) -- (mikepence);
+  \draw[arr] (pence) -- (mikepence);
+
+  \node[font=\scriptsize\itshape, chill] at (9.75, -2.7) {Op 1 + Op 2};
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3em}
+Two independent shortenings in parallel --- the model must coordinate \textbf{two sub-circuits} that each transform a different input token.
+\end{frame}
+
+% =============================================
+\begin{frame}{Chained operations: double shortening + fusion}
+
+\begin{center}
+\begin{tikzpicture}[
+  scale=0.85, transform shape,
+  box/.style={draw, rounded corners=4pt, minimum height=0.8cm, font=\small,
+              minimum width=2cm, align=center},
+  opbox/.style={draw, rounded corners=2pt, minimum height=0.5cm, font=\scriptsize,
+                fill=chill!15, minimum width=1.5cm},
+  arr/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % Benjamin Fitting -> Benefit
+  \node[box, fill=accent!10] (benjamin) at (0, 2.5) {Benjamin};
+  \node[box, fill=accent!10] (fitting) at (4, 2.5) {Fitting};
+
+  \node[opbox, fill=accent!20] (op2a) at (0, 1.2) {Op 2};
+  \node[opbox, fill=accent!20] (op2b) at (4, 1.2) {Op 2};
+
+  \node[box, fill=backbone!10] (ben) at (0, -0.1) {Ben};
+  \node[box, fill=backbone!10] (fit) at (4, -0.1) {Fit};
+
+  \node[opbox, fill=fusion!20] (op4a) at (2, -1.3) {Op 4};
+  \node[box, fill=circuit!15, minimum width=2.5cm] (benefit) at (2, -2.5) {\textbf{Benefit}};
+
+  \draw[arr] (benjamin) -- (op2a);
+  \draw[arr] (op2a) -- (ben);
+  \draw[arr] (fitting) -- (op2b);
+  \draw[arr] (op2b) -- (fit);
+  \draw[arr] (ben) -- (op4a);
+  \draw[arr] (fit) -- (op4a);
+  \draw[arr] (op4a) -- (benefit);
+
+  \node[font=\scriptsize\itshape, chill] at (2, -3.4) {Op 2 + Op 2 + Op 4};
+
+  % Patricia Turnip -> Pattern
+  \node[box, fill=accent!10] (patricia) at (8, 2.5) {Patricia};
+  \node[box, fill=accent!10] (turnip) at (12, 2.5) {Turnip};
+
+  \node[opbox, fill=accent!20] (op2c) at (8, 1.2) {Op 2};
+  \node[opbox, fill=accent!20] (op2d) at (12, 1.2) {Op 2};
+
+  \node[box, fill=backbone!10] (pat) at (8, -0.1) {Pat};
+  \node[box, fill=backbone!10] (turn) at (12, -0.1) {Turn};
+
+  \node[opbox, fill=fusion!20] (op4b) at (10, -1.3) {Op 4};
+  \node[box, fill=circuit!15, minimum width=2.5cm] (pattern) at (10, -2.5) {\textbf{Pattern}};
+
+  \draw[arr] (patricia) -- (op2c);
+  \draw[arr] (op2c) -- (pat);
+  \draw[arr] (turnip) -- (op2d);
+  \draw[arr] (op2d) -- (turn);
+  \draw[arr] (pat) -- (op4b);
+  \draw[arr] (turn) -- (op4b);
+  \draw[arr] (op4b) -- (pattern);
+
+  \node[font=\scriptsize\itshape, chill] at (10, -3.4) {Op 2 + Op 2 + Op 4};
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3em}
+Three operations composed: two parallel shortenings feed into a fusion step. The model must coordinate \textbf{three independent sub-circuits} in a single forward pass.
 \end{frame}
 
 % =============================================
@@ -414,12 +538,12 @@ Each pair follows \href{https://arxiv.org/abs/1912.00582}{BLiMP} format {\script
 \toprule
 \textbf{Operation} & \textbf{Good prompt} & \textbf{Target / Foil} \\
 \midrule
-Op 1 & ``People call Richard by the name'' & Dick / Mark \\
+Op 1 & ``People call Robert by the name'' & Bob / Mark \\
 Op 2 & ``Timothy goes by'' & Tim / Tom \\
 Op 3 & ``The letter J is pronounced'' & Jay / Gee \\
 Op 4 & ``Bill Ding sounds like'' & building / nothing \\
 Op 5 & ``Neil sounds like'' & kneel / wheel \\
-Op 6 & ``Mike Rowave sounds like'' & microwave / nothing \\
+Op 6 & ``The word curtain contains the name'' & Curt / nothing \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -445,18 +569,19 @@ Ops 1, 4, 6 are controlled vocabularies.
 \toprule
 \textbf{Input} & \textbf{Target} & \textbf{Operation} \\
 \midrule
-Richard Tater & Dictator & Op 1 + Op 4 \\
 William Ding & Building & Op 1 + Op 4 \\
-Elizabeth Aardvark & Lizard & Op 2 + Op 4 \\
+William Ding & Building & Op 1 + Op 4 \\
+Richard Tater & Dictator & Op 1 + Op 4 \\
+Charles Education Cheese & Chuck E. Cheese & Op 1 + Op 3 \\
+Timothy Bermuda & Timber & Op 2 + Op 2 + Op 4 \\
 \midrule
 Bill Ding & Building & Op 4 only \\
 Justin Time & Just in time & Op 4 only \\
 Brock Lee & Broccoli & Op 4 only \\
 Barb Dwyer & Barbed wire & Op 4 only \\
 \midrule
-Mike Rowave & Microwave & Op 6 (reverse) \\
-Dan Druff & Dandruff & Op 4 only \\
-Herb Ivore & Herbivore & Op 4 only \\
+Sue Permarket & Supermarket & Op 4 only \\
+Al Gorithm & Algorithm & Op 4 only \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -516,7 +641,7 @@ $\Rightarrow$ Distinguishes tokenization bottleneck from missing circuit.
 % =============================================
 % CIRCUIT DISCOVERY
 % =============================================
-\begin{frame}{Three-stage analysis pipeline}
+\begin{frame}{Standard Mechanistic Interpretability Pipeline}
 \hypertarget{sl:discovery}{}
 
 \begin{center}
@@ -582,6 +707,9 @@ $\Rightarrow$ Distinguishes tokenization bottleneck from missing circuit.
 
 \end{tikzpicture}
 \end{center}
+
+\vspace{0.3em}
+{\scriptsize Following the MIB framework (\href{https://arxiv.org/abs/2504.13151}{Mueller et al., 2025}): discover circuits via attribution, validate with interventions, localize causal variables.}
 \end{frame}
 
 % =============================================
@@ -671,55 +799,6 @@ Layers 7--10 are GPT-2's general-purpose computation engine. Does this extend to
 \end{frame}
 
 % =============================================
-% OVERLAP MATRIX
-% =============================================
-\begin{frame}{Circuit overlap matrix (predicted)}
-
-\begin{center}
-\begin{tikzpicture}[
-  cell/.style={minimum width=1.6cm, minimum height=0.8cm, font=\footnotesize, align=center},
-  hdr/.style={font=\bfseries\scriptsize, minimum width=1.6cm, minimum height=0.8cm}
-]
-  % Column headers
-  \node[hdr] at (1.8, 0) {Hypo};
-  \node[hdr] at (3.4, 0) {Clip};
-  \node[hdr] at (5.0, 0) {Init};
-  \node[hdr] at (6.6, 0) {Ornym};
-  \node[hdr] at (8.2, 0) {Homo};
-  \node[hdr] at (9.8, 0) {Folk};
-
-  % Row headers
-  \node[hdr, right] at (-0.5, -1) {Hypo};
-  \node[hdr, right] at (-0.5, -2) {Clip};
-  \node[hdr, right] at (-0.5, -3) {Init};
-  \node[hdr, right] at (-0.5, -4) {Ornym};
-  \node[hdr, right] at (-0.5, -5) {Homo};
-  \node[hdr, right] at (-0.5, -6) {Folk};
-
-  % Diagonal
-  \fill[accent!30] (1.0,-0.6) rectangle (2.6,-1.4); \node[cell] at (1.8,-1) {---};
-  \fill[accent!30] (2.6,-1.6) rectangle (4.2,-2.4); \node[cell] at (3.4,-2) {---};
-  \fill[accent!30] (4.2,-2.6) rectangle (5.8,-3.4); \node[cell] at (5.0,-3) {---};
-  \fill[accent!30] (5.8,-3.6) rectangle (7.4,-4.4); \node[cell] at (6.6,-4) {---};
-  \fill[accent!30] (7.4,-4.6) rectangle (9.0,-5.4); \node[cell] at (8.2,-5) {---};
-  \fill[accent!30] (9.0,-5.6) rectangle (10.6,-6.4); \node[cell] at (9.8,-6) {---};
-
-  % Expected high overlap (Hypo-Clip: both name shortening)
-  \fill[circuit!25] (2.6,-0.6) rectangle (4.2,-1.4); \node[cell, circuit] at (3.4,-1) {high?};
-  \fill[circuit!25] (1.0,-1.6) rectangle (2.6,-2.4); \node[cell, circuit] at (1.8,-2) {high?};
-
-  % Expected low overlap (Ornym vs Hypo)
-  \fill[phoneme!10] (5.8,-0.6) rectangle (7.4,-1.4); \node[cell, black] at (6.6,-1) {low?};
-  \fill[phoneme!10] (1.0,-3.6) rectangle (2.6,-4.4); \node[cell, black] at (1.8,-4) {low?};
-\end{tikzpicture}
-\end{center}
-
-\vspace{0.3em}
-Hypocorism--Clipping both shorten names $\to$ expect shared circuit.\\
-Oronym (cross-boundary fusion) is a different computation $\to$ expect distinct heads.
-\end{frame}
-
-% =============================================
 % COMPOSITION
 % =============================================
 \begin{frame}{Compositional validation protocol}
@@ -735,7 +814,7 @@ Oronym (cross-boundary fusion) is a different computation $\to$ expect distinct 
   % Tests
   \node[test, fill=chill!10] (full) at (0, 2.5) {
     \textbf{Full model}\\[3pt]
-    ``Richard Tater'' $\to$ ?
+    ``William Ding'' $\to$ ?
   };
 
   \node[test, fill=backbone!15] (abl1) at (5, 2.5) {
@@ -751,9 +830,9 @@ Oronym (cross-boundary fusion) is a different computation $\to$ expect distinct 
   };
 
   % Expected results
-  \node[result, circuit] at (0, -0.2) {\large ``Dictator'' $\checkmark$};
-  \node[result, phoneme] at (5, -0.2) {\large ``Dictator'' $\times$\\[2pt] Richard $\nrightarrow$ Dick};
-  \node[result, phoneme] at (10, -0.2) {\large ``Dictator'' $\times$\\[2pt] Dick Tater $\nrightarrow$ fuse};
+  \node[result, circuit] at (0, -0.2) {\large ``Building'' $\checkmark$};
+  \node[result, phoneme] at (5, -0.2) {\large ``Building'' $\times$\\[2pt] William $\nrightarrow$ Bill};
+  \node[result, phoneme] at (10, -0.2) {\large ``Building'' $\times$\\[2pt] Bill Ding $\nrightarrow$ fuse};
 
   \draw[arr] (full) -- (0, 0.6);
   \draw[arr] (abl1) -- (5, 0.6);
@@ -812,32 +891,9 @@ All six operations pass the 70\% accuracy gate on \href{https://cdn.openai.com/b
 \vspace{0.5em}
 Op 3 (initialism) is weakest --- letter-to-phoneme-name is the hardest regular rule.
 
-Op 6 (folk etymology) is perfect --- ``Mike Rowave'' $\to$ ``microwave'' is trivially compositional.
+Op 6 (folk etymology) is perfect --- ``curtain $\to$ Curt'' is trivially compositional.
 
 \textbf{Conclusion:} GPT-2 has phonological knowledge we can circuit-hunt for.
-\end{frame}
-
-% =============================================
-% MARGIN DISTRIBUTIONS
-% =============================================
-\begin{frame}{Logit-diff margin distributions (1/2)}
-
-\begin{center}
-\includegraphics[width=0.75\textwidth,height=0.78\textheight,keepaspectratio]{figures/margin_top3.png}
-\end{center}
-
-\vspace{-0.3em}
-Not all examples are equally hard. Narrow-margin examples (shaded) are where circuit discovery matters most --- they distinguish genuine computation from statistical shortcuts.
-\end{frame}
-
-\begin{frame}{Logit-diff margin distributions (2/2)}
-
-\begin{center}
-\includegraphics[width=0.75\textwidth,height=0.78\textheight,keepaspectratio]{figures/margin_bottom3.png}
-\end{center}
-
-\vspace{-0.3em}
-Oronym has the highest hard-example rate among compositional tasks (38\%), confirming it requires genuine cross-token phoneme assembly rather than simple pattern matching.
 \end{frame}
 
 % =============================================
@@ -873,19 +929,6 @@ Ran \href{https://arxiv.org/abs/2310.10348}{edge attribution patching with integ
 \vspace{0.5em}
 {\footnotesize CMD = circuit minimality distance (lower = sparser, better).\\
 CPR = circuit precision-recall (1.0 = perfect; $>$1.0 = slight over-recovery is OK).}
-\end{frame}
-
-% =============================================
-% SUMMARY BARS
-% =============================================
-\begin{frame}{Summary across tasks}
-
-\begin{center}
-\includegraphics[width=0.95\textwidth]{../results/plots/summary_bars.png}
-\end{center}
-
-\vspace{-0.3em}
-{\small Left: behavioral accuracy (all $>$70\% gate). Center: CMD (all $<$0.08). Right: mean logit difference. Folk etymology is easiest; initialism is hardest.}
 \end{frame}
 
 % =============================================
@@ -1082,7 +1125,7 @@ The overlap is \emph{consistent with} H3, but doesn't prove sequential computati
 
 \vspace{0.5em}
 \begin{enumerate}
-  \item \textbf{DAS probing at intermediate layers:} Train rank-1 DAS probes for ``shortening'' (Richard $\to$ Dick) at L8--9. If the oronym circuit activates these same directions before the fusion heads fire (L10--11), the chain is real.
+  \item \textbf{DAS probing at intermediate layers:} Train rank-1 DAS probes for ``shortening'' (Robert $\to$ Bob) at L8--9. If the oronym circuit activates these same directions before the fusion heads fire (L10--11), the chain is real.
 
   \item \textbf{Ablate the shared sub-circuit:} Knock out the 22 shared heads in the oronym circuit. If oronym accuracy drops to chance \emph{and} the failure mode looks like ``couldn't shorten the name'' (not ``couldn't fuse''), the oronym depends on the hypocorism sub-circuit specifically.
 
@@ -1119,6 +1162,63 @@ The overlap is \emph{consistent with} H3, but doesn't prove sequential computati
 
 \vspace{0.3em}
 {\small Shared backbone (H1) confirmed: most tasks share $\geq$40\% of top heads. Distinct specialists (H2): initialism recruits unique heads.}
+\end{frame}
+
+% =============================================
+% HEAD USAGE HEATMAP
+% =============================================
+\begin{frame}{The backbone: which heads are shared across tasks?}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figures/head_usage_heatmap.png}
+\end{center}
+
+\vspace{0.3em}
+{\small 6 heads appear in all 6 tasks (L8.H10, L8.H11, L9.H9, L10.H10, L11.H6, L11.H10) --- all in L8--11. 15 heads in 5+ tasks, 18 in 4+. Initialism has 11 unique heads (most of any task). The backbone is real and concentrated in late layers.}
+\end{frame}
+
+% =============================================
+% SUB-CIRCUIT CONTAINMENT
+% =============================================
+\begin{frame}{Sub-circuit containment}
+
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/containment_matrix.png}
+\end{center}
+\end{column}
+
+\begin{column}{0.45\textwidth}
+\vspace{1em}
+Read as: ``\% of row circuit's heads found in column circuit.''
+
+\vspace{0.5em}
+\textbf{Key findings:}
+\begin{itemize}
+  \item Hypo $\leftrightarrow$ Orny: mutual 73\% containment
+  \item Folk is 67\% contained in both Hypo and Orny
+  \item Init is only 33--40\% contained in anything --- the most distinct circuit
+  \item Homo--Clip: 67\% mutual containment
+\end{itemize}
+
+\vspace{0.5em}
+{\small Not a simple hierarchy --- circuits overlap symmetrically, suggesting a shared computational core with task-specific extensions.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% =============================================
+% LAYER-RESOLVED JACCARD
+% =============================================
+\begin{frame}{Where overlap happens: layer-resolved Jaccard}
+
+\begin{center}
+\includegraphics[width=0.85\textwidth]{figures/layer_resolved_jaccard.png}
+\end{center}
+
+\vspace{0.3em}
+{\small Layers 0--7: mean Jaccard 0.10--0.28 (task-specific). Layers 8--11: mean Jaccard 0.35--0.63 (shared backbone). The backbone is not just ``the same layers'' --- it is literally the same heads within those layers.}
 \end{frame}
 
 % =============================================
@@ -1174,6 +1274,19 @@ Sparse, faithful circuits exist for every phonological operation in GPT-2.}
 
 \vspace{0.5em}
 If all three converge on the same heads $\to$ strong evidence the circuit is real, not an artifact of any single method.
+\end{frame}
+
+% =============================================
+% EAP-IG vs ACT PATCHING
+% =============================================
+\begin{frame}{EAP-IG vs activation patching: head-by-head}
+
+\begin{center}
+\includegraphics[width=0.85\textwidth]{figures/eap_vs_actpatch.png}
+\end{center}
+
+\vspace{0.3em}
+{\small Spearman $\rho$ = 0.55--0.75 across all tasks ($p < 10^{-12}$). Color = layer. Top-30 head overlap: 13--23 of 30. Late-layer heads (yellow/green) cluster in the high-importance corner --- the backbone heads are validated by both methods.}
 \end{frame}
 
 % =============================================
@@ -1364,7 +1477,7 @@ Each operation implies a different causal variable:
 \toprule
 \textbf{Op} & \textbf{Task} & \textbf{Causal variable} \\
 \midrule
-1 & Hypocorism & Nickname identity (Richard $\to$ Dick) \\
+1 & Hypocorism & Nickname identity (Robert $\to$ Bob) \\
 2 & Clipping & First-syllable boundary position \\
 3 & Initialism & Letter $\to$ phoneme name mapping \\
 \rowcolor{fusion!8}
@@ -1384,25 +1497,47 @@ If IIA is high on the oronym circuit heads but low elsewhere $\Rightarrow$ the c
 % =============================================
 % DAS RESULTS (PLACEHOLDER)
 % =============================================
-\begin{frame}{DAS results}
+\begin{frame}{DAS results: IIA by layer}
 \hypertarget{sl:dasresults}{}
 
 \begin{center}
-\vfill
-\begin{tikzpicture}
-  \node[draw, dashed, rounded corners=8pt, fill=chill!5, minimum width=10cm,
-        minimum height=3cm, align=center, font=\large] {
-    \textbf{Experiments in progress}\\[8pt]
-    {\normalsize DAS training on circuit heads identified by EAP-IG}\\[4pt]
-    {\normalsize IIA evaluation per causal variable per task}
-  };
-\end{tikzpicture}
-\vfill
+\includegraphics[width=0.85\textwidth]{figures/das_iia_by_layer.png}
 \end{center}
 
 \vspace{0.3em}
-\small
-\textbf{Plan:} train rank-1 DAS probes at each layer per task. If layer 9 encodes the fused phoneme string in a direction (IIA $>$ 0.5), that is the first demonstration of \textbf{causal phonological subspaces} in a transformer.
+{\small Rank-1 DAS probes trained per layer per task. Homophone and folk etymology reach IIA = 1.0 (perfect causal alignment). Hypocorism peaks at L8 (0.94). Initialism is hardest (0.79 max). Most tasks have flat IIA curves --- causal variables are accessible at multiple layers, not strongly localized.}
+\end{frame}
+
+\begin{frame}{DAS results: what the numbers mean}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{High IIA ($>$0.9):}
+\begin{itemize}
+  \item Homophone (1.0 at L4)
+  \item Folk etymology (1.0 at L0)
+  \item Hypocorism (0.94 at L8)
+  \item Clipping (0.94 at L2)
+\end{itemize}
+
+\vspace{0.3em}
+These tasks have a single rank-1 direction that, when intervened on, fully controls behavior. The causal variable is \emph{linearly encoded}.
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Lower IIA:}
+\begin{itemize}
+  \item Oronym (0.84 at L11)
+  \item Initialism (0.79 at L0)
+\end{itemize}
+
+\vspace{0.3em}
+Oronym's IIA rises only at L11 --- consistent with late fusion. Initialism may need higher-rank subspaces (grapheme $\to$ phoneme is multi-dimensional).
+
+\vspace{0.3em}
+\textbf{Key result:} rank-1 DAS finds causal phonological subspaces in GPT-2. The model encodes phonological variables in linear directions.
+\end{column}
+\end{columns}
 \end{frame}
 
 % =============================================
@@ -1427,7 +1562,7 @@ If IIA is high on the oronym circuit heads but low elsewhere $\Rightarrow$ the c
 \textbf{1. Logit lens --- when does the nickname emerge?}
 \begin{itemize}
   \item Unembed the residual stream at each layer, track when the target token enters the top-$k$
-  \item If ``Dictator'' jumps into top predictions at layer 9--10, that's convergent evidence with the circuit localization
+  \item If ``Building'' jumps into top predictions at layer 9--10, that's convergent evidence with the circuit localization
 \end{itemize}
 
 \vspace{0.5em}
@@ -1751,8 +1886,13 @@ EAP-IG circuit discovery & \textcolor{circuit}{Complete} & All circuits faithful
 \midrule
 Activation patching & \textcolor{circuit}{Complete} & Validates EAP head rankings \\
 Causal discovery & \textcolor{circuit}{Complete} & PC + CD-NOD on head activations \\
-Compositional ablation & \textcolor{backbone}{Next} & Chained operation experiments \\
+DAS probing & \textcolor{circuit}{Complete} & Rank-1 causal subspaces per layer \\
+Circuit overlap analysis & \textcolor{circuit}{Complete} & Backbone + specialist structure \\
+\midrule
+Compositional ablation & \textcolor{backbone}{Next} & Ablate sub-circuits in chained ops \\
 Tokenization experiment & \textcolor{backbone}{Next} & Slash-condition test \\
+Cross-task DAS transfer & \textcolor{backbone}{Next} & Do tasks share causal directions? \\
+Causal graph discovery & \textcolor{backbone}{Next} & CD-NOD / LiNGAM on head activations \\
 \bottomrule
 \end{tabular}
 \end{center}

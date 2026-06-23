@@ -15,7 +15,7 @@ image = (
         "torch", "transformer-lens", "transformers", "einops", "pandas",
         "numpy<2", "scipy", "scikit-learn", "matplotlib", "tqdm",
         "jaxtyping", "typeguard",
-        "causal-learn", "lingam",
+        "causal-learn", "lingam", "tigramite",
     )
     .add_local_dir("datasets", "/root/phonetic-circuits/datasets")
     .add_local_dir("lib", "/root/phonetic-circuits/lib")

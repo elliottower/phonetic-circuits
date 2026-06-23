@@ -1,14 +1,14 @@
-"""Thin Modal wrapper for DAS causal variable localization.
+"""Thin Modal wrapper for DAS causal graph discovery.
 
-Parallelizes across tasks — one GPU container per task.
+Trains DAS directions per layer per task, then runs LiNGAM / PC on the
+scalar causal variables to discover the DAG between layers.
 
 Usage:
-    modal run --detach lib/run_das_modal.py
-    modal run --detach lib/run_das_modal.py --k 4
+    modal run --detach lib/run_das_causal_graph_modal.py
 """
 import modal
 
-app = modal.App("phonetic-das")
+app = modal.App("phonetic-das-causal-graph")
 vol = modal.Volume.from_name("phonetic-circuits-results", create_if_missing=True)
 
 image = (
@@ -17,22 +17,20 @@ image = (
         "torch", "transformer-lens", "transformers", "einops", "pandas",
         "numpy<2", "scipy", "scikit-learn", "matplotlib", "tqdm",
         "jaxtyping", "typeguard",
+        "causal-learn", "lingam",
     )
     .add_local_dir("datasets", "/root/phonetic-circuits/datasets")
     .add_local_dir("lib", "/root/phonetic-circuits/lib")
 )
 
-TASKS = ["op1_hypocorism", "op2_clipping", "op3_initialism",
-         "op4_oronym", "op5_homophone", "op6_folk_etym"]
-
 
 @app.function(
     image=image,
     gpu="A10G",
-    timeout=7200,
+    timeout=14400,
     volumes={"/results": vol},
 )
-def run_task(task: str, k: int = 1):
+def run(num_examples: int = 200, n_steps: int = 100):
     import subprocess
     import sys
     import os
@@ -41,19 +39,20 @@ def run_task(task: str, k: int = 1):
     sys.path.insert(0, "/root/phonetic-circuits")
 
     cmd = [
-        sys.executable, "-m", "lib.run_das",
-        "--tasks", task,
-        "--k", str(k),
-        "--output-dir", "/results/das",
+        sys.executable, "-m", "lib.run_das_causal_graph",
+        "--retrain",
+        "--num-examples", str(num_examples),
+        "--n-steps", str(n_steps),
+        "--output-dir", "/results/das_causal_graph",
         "--device", "cuda",
     ]
     print(f"Running: {' '.join(cmd)}", flush=True)
     subprocess.run(cmd, check=True)
 
     vol.commit()
-    print(f"Done {task}, results committed to volume.", flush=True)
+    print("Done, results committed to volume.", flush=True)
 
 
 @app.local_entrypoint()
-def main(k: int = 1):
-    list(run_task.map(TASKS, kwargs={"k": k}))
+def main(num_examples: int = 200, n_steps: int = 100):
+    run.remote(num_examples=num_examples, n_steps=n_steps)

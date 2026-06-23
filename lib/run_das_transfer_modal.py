@@ -1,14 +1,12 @@
-"""Thin Modal wrapper for DAS causal variable localization.
-
-Parallelizes across tasks — one GPU container per task.
+"""Thin Modal wrapper for cross-task DAS transfer.
 
 Usage:
-    modal run --detach lib/run_das_modal.py
-    modal run --detach lib/run_das_modal.py --k 4
+    modal run --detach lib/run_das_transfer_modal.py
+    modal run --detach lib/run_das_transfer_modal.py --layer 8 --k 2
 """
 import modal
 
-app = modal.App("phonetic-das")
+app = modal.App("phonetic-das-transfer")
 vol = modal.Volume.from_name("phonetic-circuits-results", create_if_missing=True)
 
 image = (
@@ -22,17 +20,9 @@ image = (
     .add_local_dir("lib", "/root/phonetic-circuits/lib")
 )
 
-TASKS = ["op1_hypocorism", "op2_clipping", "op3_initialism",
-         "op4_oronym", "op5_homophone", "op6_folk_etym"]
 
-
-@app.function(
-    image=image,
-    gpu="A10G",
-    timeout=7200,
-    volumes={"/results": vol},
-)
-def run_task(task: str, k: int = 1):
+@app.function(image=image, gpu="A10G", timeout=14400, volumes={"/results": vol})
+def run(layer: int = 10, k: int = 1):
     import subprocess
     import sys
     import os
@@ -41,19 +31,19 @@ def run_task(task: str, k: int = 1):
     sys.path.insert(0, "/root/phonetic-circuits")
 
     cmd = [
-        sys.executable, "-m", "lib.run_das",
-        "--tasks", task,
+        sys.executable, "-m", "lib.run_das_transfer",
+        "--layer", str(layer),
         "--k", str(k),
-        "--output-dir", "/results/das",
+        "--output-dir", "/results/das_transfer",
         "--device", "cuda",
     ]
     print(f"Running: {' '.join(cmd)}", flush=True)
     subprocess.run(cmd, check=True)
 
     vol.commit()
-    print(f"Done {task}, results committed to volume.", flush=True)
+    print(f"Done, results committed to volume.", flush=True)
 
 
 @app.local_entrypoint()
-def main(k: int = 1):
-    list(run_task.map(TASKS, kwargs={"k": k}))
+def main(layer: int = 10, k: int = 1):
+    run.remote(layer=layer, k=k)

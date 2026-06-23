@@ -15,7 +15,7 @@ The six phonological operations (see slides/paper for definitions):
     op3_initialism   — J → Jay         (grapheme-to-phoneme name)
     op4_oronym       — Bill Ding → building  (cross-boundary fusion)
     op5_homophone    — Neil → kneel    (phoneme-identity detection)
-    op7_folk_etym    — Mike Rowave → microwave  (reverse decomposition)
+    op6_folk_etym    — Mike Rowave → microwave  (reverse decomposition)
 """
 from pathlib import Path
 from typing import Optional
@@ -31,7 +31,7 @@ PHONETIC_TASKS = {
     "op3_initialism",
     "op4_oronym",
     "op5_homophone",
-    "op7_folk_etym",
+    "op6_folk_etym",
 }
 
 

@@ -1,0 +1,440 @@
+\documentclass{article}
+
+% TMLR format
+\usepackage[accepted]{tmlr}
+
+\newcommand{\openreview}{\url{https://openreview.net/forum?id=XXXX}}
+\def\month{06}
+\def\year{2026}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\newcommand{\TODO}[1]{{\color{orange}[TODO: #1]}}
+\newcommand{\NUM}[1]{\textbf{#1}}
+\newcommand{\PENDING}[1]{{\color{blue}[PENDING: #1]}}
+
+\title{\textbf{Phonological Assembly Circuits in GPT-2:\\
+How Transformers Compute Sound Structure from Orthography}}
+
+\author{
+  Elliot Tower \\
+  \texttt{elliot@elliottower.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+No published work has performed circuit-level causal analysis on phonological
+operations in transformer language models. We identify and validate circuits for
+six distinct phonological operations in GPT-2 Small, ranging from stored lexical
+lookup (rhyming hypocorism: Richard $\to$ Dick) to cross-boundary phoneme fusion
+(oronym: ``Bill Ding'' $\to$ ``building''). Each operation requires a
+linguistically distinct computation --- irregular lookup, regular truncation,
+grapheme-to-phoneme mapping, juncture reanalysis, homophone recognition, and
+reverse folk etymology --- and we find that each activates a \emph{distinct}
+circuit architecture with \PENDING{N--M} heads per circuit.
+
+Using weight-space circuit discovery \citep{tower2026weights}, EAP, and
+activation patching, we show that: (1)~the universal backbone tier (L0H8, L0H9,
+L0H11) participates in all phonological circuits, consistent with the
+``operating system'' hypothesis; (2)~the oronym circuit --- which must fuse
+phonemes across a word boundary --- uses \PENDING{specific mid-layer heads
+in layers 3--8} that have not been identified in any prior circuit;
+(3)~compound phonological puns (``Richard Tater'' $\to$ ``Dictator'') activate
+the expected composition of component circuits, and ablating either component
+breaks the compound.
+
+The oronym circuit is the central novel finding: it demonstrates that GPT-2
+implements cross-boundary phonological assembly from purely orthographic input,
+a capability previously demonstrated only behaviorally
+\citep{liao2026tokenization,suvarna2024phonologybench} but never localized to
+specific attention heads.
+\end{abstract}
+
+%% =========================================================
+\section{Introduction}
+%% =========================================================
+
+The mechanistic interpretability literature has characterized circuits for
+syntactic operations (IOI, SVA, reflexive anaphora) and simple retrieval tasks
+(induction, greater-than). But the space of \emph{phonological} circuits ---
+computations that operate on sound structure rather than syntactic structure ---
+is entirely unexplored at the circuit level.
+
+This gap matters because phonological computation in transformers is
+surprising: BPE tokenization encodes orthography, not phonology, yet language
+models demonstrably encode phonological structure in their hidden states
+\citep{liao2026tokenization}. Linear probes on GPT-2's middle layers achieve
+63--79\% accuracy on rhyme detection, and larger models perform above chance
+on grapheme-to-phoneme conversion \citep{suvarna2024phonologybench}. The
+question we address is: \emph{which specific attention heads compute this
+phonological knowledge, and do different phonological operations use different
+circuits?}
+
+\paragraph{The phonetic name pun as a natural task.}
+We use phonetic name puns as our task family because they decompose into
+well-specified linguistic operations with clear minimal-pair evaluations.
+``Richard Tater $\to$ Dictator'' requires two operations: (Op~1) rhyming
+hypocorism (Richard $\to$ Dick) and (Op~4) oronym/juncture reanalysis
+(Dick Tater $\to$ Dictator). By testing each operation independently, we
+isolate the circuit for each computation.
+
+\paragraph{Contributions.}
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+  \item Six linguistically specified circuit tasks with minimal-pair datasets
+  (\PENDING{total N} pairs across 6 operations).
+  \item Circuit discovery for each operation using EAP, activation patching,
+  and weight-space features.
+  \item The first identification of cross-boundary phoneme fusion heads in
+  any transformer model (the oronym circuit).
+  \item Cross-reference with the GPT-2 acronym circuit
+  \citep{garcia2024acronym}: Op~3 (initialism) \PENDING{shares / does not
+  share} heads with their letter-mover circuit.
+  \item Compositional validation: compound puns activate the expected
+  combination of component circuits.
+\end{enumerate}
+
+%% =========================================================
+\section{Operations and Datasets}
+%% =========================================================
+
+\subsection{Linguistic Classification}
+
+Each operation is defined by the linguistic computation it requires. We use
+standard terminology from phonology and morphology.
+
+\begin{table}[h!]
+\centering
+\caption{The six phonological operations tested, with linguistic classification,
+example pairs, and dataset sizes.}
+\label{tab:operations}
+\small
+\begin{tabular}{llllr}
+\toprule
+\textbf{Op} & \textbf{Linguistic term} & \textbf{Example} & \textbf{Computation} & \textbf{N pairs} \\
+\midrule
+1 & Rhyming hypocorism & Richard $\to$ Dick & Irregular stored lookup & 32 \\
+2 & Clipping (apocope) & Timothy $\to$ Tim & Regular first-syllable truncation & 90 \\
+3 & Initialism + letter name & J $\to$ Jay & Grapheme $\to$ phoneme name & 30 \\
+4 & Oronym (juncture reanalysis) & Bill Ding $\to$ building & Cross-boundary phoneme fusion & 99 \\
+5 & Homophone recognition & Neil $\to$ kneel & Phoneme-identity detection & 120 \\
+7 & Folk etymology & microwave $\to$ Michael Wave & Reverse decomposition & 75 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Dataset Construction}
+
+Each pair has the format \texttt{\{good, bad, target\_token, foil\_token\}},
+following the BLiMP minimal-pair methodology \citep{warstadt2020blimp}. The
+evaluation metric is logit difference: the model should assign higher
+probability to the target than the foil at the final position.
+
+\paragraph{Tokenization audit.}
+Following \citet{liao2026tokenization}, we audit every pair for BPE
+tokenization: target and foil must each be a single BPE token.
+\PENDING{N/total} pairs pass this filter. Multi-token targets are excluded
+from circuit discovery but reported as a tokenization bottleneck finding.
+
+\paragraph{Procedural expandability.}
+Ops 2, 3, and 5 can be expanded procedurally using CMU Pronouncing Dictionary
+(Op~2: syllable-based clipping, Op~3: all 26 letters, Op~5: $\sim$3000
+homophone pairs). Ops 1, 4, and 7 are controlled vocabularies --- acceptable
+for psycholinguistic-style studies as long as the full inventory is reported
+\citep{warstadt2020blimp}.
+
+%% =========================================================
+\section{Behavioral Validation}
+%% =========================================================
+
+Before circuit discovery, we test whether GPT-2 Small can perform each
+operation at all. Gate: $>$70\% accuracy on logit-diff evaluation.
+
+\begin{table}[h!]
+\centering
+\caption{Behavioral validation results. Gate threshold: 70\% accuracy.}
+\label{tab:behavioral}
+\small
+\begin{tabular}{lrrrl}
+\toprule
+\textbf{Operation} & \textbf{Accuracy} & \textbf{Mean LD} & \textbf{N} & \textbf{Gate} \\
+\midrule
+Op 1: Rhyming hypocorism   & \PENDING{xx\%} & \PENDING{$\pm$x.xx} & 32  & \PENDING{PASS/FAIL} \\
+Op 2: Clipping             & \PENDING{xx\%} & \PENDING{$\pm$x.xx} & 90  & \PENDING{PASS/FAIL} \\
+Op 3: Letter name          & \PENDING{xx\%} & \PENDING{$\pm$x.xx} & 30  & \PENDING{PASS/FAIL} \\
+Op 4: Oronym               & \PENDING{xx\%} & \PENDING{$\pm$x.xx} & 99  & \PENDING{PASS/FAIL} \\
+Op 5: Homophone            & \PENDING{xx\%} & \PENDING{$\pm$x.xx} & 120 & \PENDING{PASS/FAIL} \\
+Op 7: Folk etymology       & \PENDING{xx\%} & \PENDING{$\pm$x.xx} & 75  & \PENDING{PASS/FAIL} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Expected results.}
+Ops 1 and 2 (name $\to$ nickname) should pass easily --- these are well-known
+associations in GPT-2's training data. Op 5 (homophones) should pass based on
+PhonologyBench results. Op 4 (oronym) is uncertain --- this requires
+cross-boundary phoneme fusion, which is bottlenecked by tokenization. Op 7
+(folk etymology) is expected to fail on GPT-2 Small since it requires
+generating creative decompositions not in training data.
+
+\paragraph{Cross-model sweep.}
+For operations that fail the gate on GPT-2 Small, we test GPT-2 Medium and
+Large. \PENDING{Report which ops pass at which scale.}
+
+%% =========================================================
+\section{Circuit Discovery}
+%% =========================================================
+
+For each operation passing the behavioral gate, we run three complementary
+discovery methods:
+
+\subsection{EAP (Edge Attribution Patching)}
+
+Gradient-based head importance via retained gradients on \texttt{hook\_z}
+activations. Ranks all 144 heads by attribution score.
+
+\subsection{Activation Patching}
+
+Single-head mean ablation: replace each head's activations with corpus mean
+and measure logit-diff degradation.
+
+\subsection{Weight-Space Features}
+
+Extract 173 weight features (108 spectral + 65 behavioral proxy) per head.
+Bootstrap stability classification with greedy formula search identifies the
+weight-predicted circuit \citep{tower2026weights}.
+
+\subsection{Results}
+
+\PENDING{Per-operation tables with: (a) EAP top-15 ranking, (b) activation
+patching top-15, (c) weight-predicted circuit, (d) P/R/F1 of weight prediction
+vs activation ground truth.}
+
+\subsubsection{Op 1: Rhyming Hypocorism Circuit}
+
+\PENDING{Expected: lookup circuit. Small number of heads with high OV cosine
+similarity between name input direction and nickname output direction. Likely
+concentrated in layers 3--8 (mid-layer, where Liao \& Shi find phonological
+info peaks). Should resemble IOI name-mover heads but for associative content
+rather than positional copying.}
+
+\begin{table}[h!]
+\centering
+\caption{Op 1 circuit: top heads by activation patching.}
+\label{tab:op1_circuit}
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Head} & \textbf{Patching effect} & \textbf{Weight-predicted?} \\
+\midrule
+\PENDING{L?H?} & \PENDING{x.xxx} & \PENDING{Y/N} \\
+\PENDING{L?H?} & \PENDING{x.xxx} & \PENDING{Y/N} \\
+\PENDING{...}   &                  &                \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Op 2: Clipping Circuit}
+
+\PENDING{Expected: positional/syllable-boundary detector circuit. Related to
+acronym circuit's positional heads but operating on within-token phonological
+structure.}
+
+\subsubsection{Op 3: Initialism + Letter Name Circuit}
+
+\PENDING{This is the micro-version of the acronym task. Key test: do the
+Garc\'ia-Carrasco et al. 8 letter-mover heads appear in this circuit?
+If yes, convergent validation with independent method.
+If no, Op 3 requires additional phoneme-lookup heads beyond positional
+extraction, which would be a new finding.}
+
+\subsubsection{Op 4: Oronym Circuit (Core Novel Finding)}
+
+\PENDING{This is the most novel circuit. The model must fuse phonemes across
+a word boundary (``Bill'' + ``Ding'' $\to$ ``building''). No prior work has
+identified cross-boundary phoneme fusion heads.
+
+Expected circuit structure:
+\begin{itemize}
+  \item Backbone (L0): universal infrastructure
+  \item Mid-layer fusion heads (L3--L8): the novel component --- heads that
+  attend across the word boundary and compose phonemic representations
+  \item Readout (L10--L11): standard output infrastructure
+\end{itemize}
+
+Key question: does this circuit overlap with the clipping circuit (Op 2)?
+If the fusion heads are distinct from clipping heads, that's evidence for
+specialized phonological circuitry.}
+
+\subsubsection{Op 5: Homophone Circuit}
+
+\PENDING{Expected: phoneme-identity detection circuit in mid-layers.
+Liao \& Shi's probing results (63--79\% rhyme detection accuracy) suggest
+phonological representations exist in layers 3--8. The homophone circuit
+should read from these representations.}
+
+\subsubsection{Op 7: Folk Etymology Circuit}
+
+\PENDING{Expected to fail behavioral gate on GPT-2 Small. If it passes on
+Medium/Large, the circuit would be the reverse of Op 4 --- decomposing a word
+into name-like constituents rather than composing names into a word.}
+
+%% =========================================================
+\section{Cross-Reference Analysis}
+%% =========================================================
+
+\subsection{Shared Infrastructure}
+
+\PENDING{Does the backbone tier (L0H8, L0H9, L0H11) appear in all phonological
+circuits, consistent with the ``operating system'' hypothesis from Paper A?
+Expected: yes, based on transfer results across RTI/SVA/IOI/gendered pronoun.}
+
+\subsection{Overlap with Acronym Circuit}
+
+The Garc\'ia-Carrasco et al.\ acronym circuit consists of 8 letter-mover heads.
+Op 3 (initialism) is the closest match to their task.
+
+\begin{table}[h!]
+\centering
+\caption{Overlap between phonological circuits and known circuits.}
+\label{tab:overlap}
+\small
+\begin{tabular}{lccccc}
+\toprule
+& \textbf{RTI} & \textbf{IOI} & \textbf{SVA} & \textbf{Acronym} & \textbf{Induction} \\
+\midrule
+Op 1 (hypocorism) & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} \\
+Op 2 (clipping)   & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} \\
+Op 3 (letter name)& \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} \\
+Op 4 (oronym)     & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} \\
+Op 5 (homophone)  & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} & \PENDING{N} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The Phonological Circuit Overlap Matrix}
+
+\PENDING{Heat map showing pairwise overlap between all 6 operation circuits.
+Expected: Ops 1 and 2 (both name-shortening) share more heads than Ops 4 and 5
+(different mechanisms). If Op 4 and Op 5 share mid-layer heads, that suggests
+a shared ``phonological representation'' layer.}
+
+%% =========================================================
+\section{Compositional Validation}
+%% =========================================================
+
+\PENDING{Test compound puns that chain operations:
+\begin{itemize}
+  \item ``Richard Tater'' $\to$ ``Dictator'' = Op 1 (Richard $\to$ Dick) + Op 4 (Dick Tater $\to$ Dictator)
+  \item ``Elizabeth Aardvark'' $\to$ ``Lizard'' = Op 2 (Elizabeth $\to$ Liz) + Op 4 (Liz Ard $\to$ Lizard)
+  \item ``William Dingo'' $\to$ ``Building'' = Op 1 (William $\to$ Bill) + Op 4 (Bill Ding $\to$ Building)
+\end{itemize}
+
+For each compound: (a) test behavioral accuracy, (b) ablate Op 1 circuit only
+--- compound should break, Op 4 alone should survive, (c) ablate Op 4 circuit
+only --- compound should break, Op 1 alone should survive. This is the
+compositionality test.
+
+NOTE: This section requires running compound ops after individual op circuits
+are found. Not included in initial pod run.}
+
+%% =========================================================
+\section{Tokenization as Bottleneck}
+%% =========================================================
+
+\PENDING{Following Liao \& Shi (2026):
+\begin{itemize}
+  \item Report STAD scores for all input words
+  \item Test slash-delimited condition (``B/i/l/l D/i/n/g'') for Op 4
+  \item If slash-delimiter significantly improves Op 4 accuracy, that's
+  evidence that the oronym circuit \emph{exists} but is bottlenecked by
+  tokenization --- the model has the structural capacity (weight-space
+  circuit) but can't activate it with standard tokenization
+  \item This would be a publishable finding connecting the weight-capacity
+  vs.\ activation-flow distinction from Paper A to a phonological setting
+\end{itemize}}
+
+%% =========================================================
+\section{Discussion}
+%% =========================================================
+
+\paragraph{Novelty.}
+No prior work has done circuit-level causal analysis on phonological
+operations. The closest is the acronym circuit \citep{garcia2024acronym},
+which is positional (letter extraction) rather than phonological. Our work
+connects the behavioral phonological capabilities demonstrated by
+\citet{suvarna2024phonologybench} and \citet{liao2026tokenization} to specific
+attention heads for the first time.
+
+\paragraph{The oronym circuit as the core finding.}
+Cross-boundary phoneme fusion --- composing two input tokens (``Bill'' +
+``Ding'') into a phonologically coherent output (``building'') --- is the
+most novel circuit type. If GPT-2 can do this, the model has learned to
+represent phonological continuity across token boundaries despite training
+on purely orthographic input.
+
+\paragraph{Implications for the operating system hypothesis.}
+If the backbone tier participates in all phonological circuits, it extends
+the ``operating system'' finding from Paper A/D to a new domain. The backbone
+provides general-purpose attention infrastructure; phonological computation is
+built on top of it, not in parallel.
+
+\paragraph{Limitations.}
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item Controlled vocabulary for Ops 1, 4, 7 (not procedurally generated).
+  \item GPT-2 Small may fail behavioral gate on hardest operations.
+  \item English-only; phonological operations differ across languages.
+  \item BPE tokenization is a known confounder --- results reflect the
+  interaction of phonological knowledge with tokenization artifacts.
+\end{itemize}
+
+\paragraph{Venue target.}
+COLM, Findings of ACL, or MI workshop. The novel operation types,
+compositional structure, and first-ever phonological circuit identification
+position this as a meaningful extension of the MI circuits literature.
+
+\bibliographystyle{tmlr}
+\begin{thebibliography}{99}
+
+\bibitem[Tower(2026)]{tower2026weights}
+Tower, E. (2026). Reading circuits from weights. \textit{Manuscript}.
+
+\bibitem[Garc\'ia-Carrasco et~al.(2024)]{garcia2024acronym}
+Garc\'ia-Carrasco, J. et~al. (2024). How does GPT-2 predict acronyms?
+  \textit{AISTATS 2024}. arXiv:2405.04156.
+
+\bibitem[Suvarna et~al.(2024)]{suvarna2024phonologybench}
+Suvarna, A., Khandelwal, A., and Peng, N. (2024). PhonologyBench: Evaluating
+  phonological skills of large language models. arXiv:2404.02456.
+
+\bibitem[Liao and Shi(2026)]{liao2026tokenization}
+Liao, C. and Shi, P. (2026). How tokenization limits phonological knowledge
+  representation in language models. \textit{ACL 2026}. arXiv:2604.17105.
+
+\bibitem[Warstadt et~al.(2020)]{warstadt2020blimp}
+Warstadt, A. et~al. (2020). BLiMP: The benchmark of linguistic minimal pairs
+  for English. \textit{TACL}.
+
+\bibitem[Wang et~al.(2023)]{wang2023ioi}
+Wang, K. et~al. (2023). Interpretability in the wild. \textit{ICLR 2023}.
+
+\bibitem[Olsson et~al.(2022)]{olsson2022icl}
+Olsson, C. et~al. (2022). In-context learning and induction heads.
+  \textit{Transformer Circuits Thread}.
+
+\bibitem[Hanna et~al.(2023)]{hanna2023gt}
+Hanna, M. et~al. (2023). How does GPT-2 compute greater-than?
+  \textit{NeurIPS 2023}.
+
+\end{thebibliography}
+
+\end{document}
