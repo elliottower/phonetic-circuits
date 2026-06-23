@@ -5,6 +5,10 @@ authors:
   - family-names: Tower
     given-names: Elliot
     email: elliot@elliottower.ai
+    orcid: "https://orcid.org/0000-0001-7004-8884"
 type: software
 license: MIT
 repository-code: "https://github.com/elliottower/phonetic-circuits"
+doi: "10.5281/zenodo.20820107"
+version: "0.2.0"
+date-released: "2026-06-23"
