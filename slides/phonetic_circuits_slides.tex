@@ -16,7 +16,8 @@
   shapes.geometric,
   backgrounds,
   chains,
-  matrix
+  matrix,
+  decorations.pathreplacing
 }
 \usepackage{amsmath,amssymb}
 \usepackage{xcolor}
@@ -517,45 +518,70 @@ $\Rightarrow$ Weight-space capacity vs.\ activation-flow distinction.
 % =============================================
 % CIRCUIT DISCOVERY
 % =============================================
-\begin{frame}{Three discovery methods}
+\begin{frame}{Three-stage analysis pipeline}
 \hypertarget{sl:discovery}{}
 
 \begin{center}
 \begin{tikzpicture}[
-  scale=0.85, transform shape,
-  method/.style={draw, rounded corners=6pt, minimum height=2.2cm, minimum width=3.2cm,
-                 align=center, font=\small},
-  arr/.style={-{Stealth[length=2mm]}, thick, black}
+  method/.style={draw, rounded corners=6pt, minimum height=2cm, minimum width=3.8cm,
+               align=center, font=\normalsize},
+  output/.style={draw, dashed, rounded corners=4pt, minimum height=1.6cm, minimum width=3.8cm,
+               align=center, font=\small},
+  arr/.style={-{Stealth[length=3mm]}, very thick, black},
+  downarr/.style={-{Stealth[length=2.5mm]}, thick, black!60}
 ]
-  \node[method, fill=accent!10] (eap) at (0, 0) {
-    \textbf{EAP-IG}\\[3pt]
-    {\scriptsize Gradient-based}\\
-    {\scriptsize edge attribution}\\
-    {\scriptsize (Syed et al., 2023)}
+  % Top row: methods
+  \node[method, fill=accent!10] (eap) at (0, 2) {
+    \textbf{EAP-IG}\\[4pt]
+    Approximate gradient\\
+    edge attribution
   };
 
-  \node[method, fill=circuit!10] (ap) at (5, 0) {
+  \node[method, fill=circuit!10] (ap) at (5, 2) {
     \textbf{Activation}\\
-    \textbf{Patching}\\[3pt]
-    {\scriptsize Mean-ablate each}\\
-    {\scriptsize node/edge, measure}\\
-    {\scriptsize logit-diff drop}
+    \textbf{Patching}\\[4pt]
+    Ablate each head,\\
+    measure effect
   };
 
-  \node[method, fill=fusion!10] (das) at (10, 0) {
-    \textbf{DAS}\\[3pt]
-    {\scriptsize Find linear subspace}\\
-    {\scriptsize encoding the causal}\\
-    {\scriptsize variable (IIA)}
+  \node[method, fill=fusion!10] (das) at (10, 2) {
+    \textbf{DAS}\\[4pt]
+    Find linear direction\\
+    in residual stream
   };
 
-  \draw[arr] (eap) -- (ap) node[midway, above, font=\scriptsize] {validate};
-  \draw[arr] (ap) -- (das) node[midway, above, font=\scriptsize] {localize};
+  % Arrows between methods
+  \draw[arr] (eap) -- (ap);
+  \draw[arr] (ap) -- (das);
 
-  \node[draw, dashed, rounded corners=4pt, fill=chill!5, minimum width=10cm,
-        minimum height=0.8cm, font=\small] at (5, -2.2) {
-    Circuit $\to$ validate $\to$ find what flows along the edges
+  % Down arrows
+  \draw[downarr] (eap) -- (0, 0.4);
+  \draw[downarr] (ap) -- (5, 0.4);
+  \draw[downarr] (das) -- (10, 0.4);
+
+  % Bottom row: outputs
+  \node[output, fill=accent!5] at (0, -0.4) {
+    Candidate circuit\\
+    {\footnotesize (fast, approximate)}
   };
+
+  \node[output, fill=circuit!5] at (5, -0.4) {
+    Validated circuit\\
+    {\footnotesize (independently confirmed)}
+  };
+
+  \node[output, fill=fusion!5] at (10, -0.4) {
+    Causal subspace\\
+    {\footnotesize (direction encoding}\\
+    {\footnotesize the causal variable)}
+  };
+
+  % Braces
+  \draw[decorate, decoration={brace, amplitude=6pt, mirror}, thick]
+    (-2, -1.5) -- (7, -1.5) node[midway, below=8pt, font=\normalsize\bfseries] {Circuit Localization};
+  \draw[decorate, decoration={brace, amplitude=6pt, mirror}, thick]
+    (8, -1.5) -- (12, -1.5) node[midway, below=8pt, font=\normalsize\bfseries, align=center] {Causal Variable\\[-2pt]Localization};
+
 \end{tikzpicture}
 \end{center}
 \end{frame}
@@ -576,73 +602,74 @@ $\Rightarrow$ Weight-space capacity vs.\ activation-flow distinction.
 % =============================================
 % BACKBONE HYPOTHESIS
 % =============================================
-\begin{frame}{The backbone hypothesis}
+\begin{frame}{Prior circuits converge on the same layers}
 \hypertarget{sl:backbone}{}
 
-Prior finding: heads L0H8, L0H9, L0H11 participate in \emph{every} known circuit (IOI, SVA, greater-than, induction).
+Known GPT-2 circuits reuse the \textbf{same layers} across unrelated tasks:
 
-\vspace{0.5em}
+\vspace{0.2em}
 \begin{center}
-\begin{tikzpicture}[
-  scale=0.75, transform shape,
-  layer/.style={draw, rounded corners=3pt, minimum height=0.7cm, font=\small,
-                minimum width=10cm, fill=chill!8},
-  head/.style={circle, draw, minimum size=0.65cm, font=\scriptsize, thick}
-]
-  % Layers
-  \node[layer] (l11) at (0, 5.5) {Layer 11 --- Readout};
-  \node[layer] (l8) at (0, 4.2) {Layers 3--8 --- \textbf{Task-specific}};
-  \node[layer, fill=backbone!15] (l0) at (0, 2.9) {Layer 0 --- \textbf{Backbone}};
-  \node[layer, fill=accent!8] (emb) at (0, 1.6) {Token embeddings};
-
-  % Backbone heads — below the layer label, between L0 and embeddings
-  \node[head, fill=backbone!30] (h8) at (-2.5, 2.2) {0.8};
-  \node[head, fill=backbone!30] (h9) at (0, 2.2) {0.9};
-  \node[head, fill=backbone!30] (h11) at (2.5, 2.2) {0.11};
-
-  % Arrows from embeddings up through heads
-  \draw[-{Stealth[length=2mm]}, thick, backbone!70] (emb) -- (l0);
-  \draw[-{Stealth[length=2mm]}, thick, black] (l0) -- (l8);
-  \draw[-{Stealth[length=2mm]}, thick, black] (l8) -- (l11);
-
-  % Question
-  \node[draw, dashed, rounded corners=4pt, fill=fusion!5, font=\small,
-        minimum width=8cm] at (0, 0.2) {
-    \textbf{Prediction:} backbone appears in all 6 phonological circuits
-  };
-\end{tikzpicture}
+\scriptsize
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{lll}
+\toprule
+\textbf{Task} & \textbf{Key heads (layers)} & \textbf{Source} \\
+\midrule
+IOI & S-inhibition (L7--8), name movers (L9--10) & \href{https://arxiv.org/abs/2211.00593}{Wang et al.\ 2023} \\
+Greater-than & Attn (L5--9), MLPs (L8--11) & \href{https://arxiv.org/abs/2305.00586}{Hanna et al.\ 2023} \\
+Induction & Prev-token (L2, L4), induction (L5--7) & \href{https://arxiv.org/abs/2209.11895}{Olsson et al.\ 2022} \\
+SVA & Top heads span L0, L6, L9--11 & \href{https://arxiv.org/abs/2506.22105}{Lazo et al.\ 2025} \\
+\bottomrule
+\end{tabular}
 \end{center}
 
 \vspace{0.3em}
-If confirmed: the ``operating system'' extends to phonological computation.
+\begin{center}
+\begin{tikzpicture}[
+  layer/.style={draw, rounded corners=3pt, minimum height=0.55cm, font=\small,
+                minimum width=11cm},
+]
+  \node[layer, fill=accent!8] at (0, 0) {L0--4: Early processing (prev-token, duplicate-token, positional)};
+  \node[layer, fill=chill!10] at (0, 0.75) {L5--7: Intermediate (induction, greater-than attention)};
+  \node[layer, fill=backbone!15] at (0, 1.5) {\textbf{L7--10: Convergence zone} (IOI, GT, SVA, induction all active here)};
+  \node[layer, fill=fusion!10] at (0, 2.25) {L11: Readout / unembedding};
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.4em}
+Layers 7--10 are GPT-2's general-purpose computation engine. Does this extend to phonology?
 \end{frame}
 
 % =============================================
 % FUSION HEADS
 % =============================================
-\begin{frame}{Predicted circuit architectures}
+\begin{frame}{Three hypotheses}
 \hypertarget{sl:fusionheads}{}
 
 \begin{center}
-\small
-\begin{tabular}{llll}
-\toprule
-\textbf{Op} & \textbf{Expected circuit type} & \textbf{Key heads} & \textbf{Analogy} \\
-\midrule
-1 & Associative lookup & Mid-layer OV & Name-mover (IOI) \\
-2 & Positional truncation & Positional attn & Acronym circuit \\
-3 & G2P map & Letter $\to$ phoneme & Letter-mover \\
-\rowcolor{fusion!8}
-4 & \textbf{Cross-boundary fusion} & \textbf{Novel L3--L8} & \textbf{None known} \\
-5 & Phoneme identity & Mid-layer probe & Rhyme probes \\
-7 & Reverse decomposition & Creative gen & Expected to fail \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{tikzpicture}[
+  hyp/.style={draw, rounded corners=6pt, minimum height=2cm, minimum width=10.5cm,
+              align=left, font=\normalsize, inner sep=10pt},
+]
+  \node[hyp, fill=backbone!12] at (0, 4.2) {
+    \textbf{H1: Shared backbone}\hfill{\small (convergence zone)}\\[4pt]
+    All 6 phonological circuits will use heads in L7--10, the same layers\\
+    that IOI, greater-than, SVA, and induction all rely on.
+  };
 
-\vspace{0.8em}
-Op 4 is the core novel finding: if cross-boundary fusion heads exist,\\
-they are \textbf{a new circuit type} not identified in any prior work.
+  \node[hyp, fill=accent!10] at (0, 1.8) {
+    \textbf{H2: Distinct specialists}\hfill{\small (task-specific heads)}\\[4pt]
+    Each operation will recruit additional heads \emph{outside} the backbone ---\\
+    different computations (lookup vs.\ fusion vs.\ truncation) need different circuits.
+  };
+
+  \node[hyp, fill=fusion!10] at (0, -0.6) {
+    \textbf{H3: Compositional reuse}\hfill{\small (sub-circuit sharing)}\\[4pt]
+    Compound operations (e.g.\ oronym = hypocorism + fusion) reuse\\
+    sub-circuits from their component operations.
+  };
+\end{tikzpicture}
+\end{center}
 \end{frame}
 
 % =============================================
@@ -705,7 +732,7 @@ If Op 4 uses \emph{unique} heads not shared with any other operation: evidence f
 
 \begin{center}
 \begin{tikzpicture}[
-  test/.style={draw, rounded corners=6pt, minimum height=2cm, minimum width=4.5cm,
+  test/.style={draw, rounded corners=6pt, minimum height=1.8cm, minimum width=4cm,
                align=center, font=\normalsize},
   result/.style={font=\normalsize, align=center},
   arr/.style={-{Stealth[length=3mm]}, very thick, black}
@@ -716,13 +743,13 @@ If Op 4 uses \emph{unique} heads not shared with any other operation: evidence f
     ``Richard Tater'' $\to$ ?
   };
 
-  \node[test, fill=backbone!15] (abl1) at (5.5, 2.5) {
+  \node[test, fill=backbone!15] (abl1) at (5, 2.5) {
     \textbf{Ablate Op 1}\\[3pt]
     Remove hypocorism\\
     circuit
   };
 
-  \node[test, fill=fusion!15] (abl4) at (11, 2.5) {
+  \node[test, fill=fusion!15] (abl4) at (10, 2.5) {
     \textbf{Ablate Op 4}\\[3pt]
     Remove oronym\\
     circuit
@@ -730,12 +757,12 @@ If Op 4 uses \emph{unique} heads not shared with any other operation: evidence f
 
   % Expected results
   \node[result, circuit] at (0, -0.2) {\large ``Dictator'' $\checkmark$};
-  \node[result, phoneme] at (5.5, -0.2) {\large ``Dictator'' $\times$\\[2pt] Richard $\nrightarrow$ Dick};
-  \node[result, phoneme] at (11, -0.2) {\large ``Dictator'' $\times$\\[2pt] Dick Tater $\nrightarrow$ fuse};
+  \node[result, phoneme] at (5, -0.2) {\large ``Dictator'' $\times$\\[2pt] Richard $\nrightarrow$ Dick};
+  \node[result, phoneme] at (10, -0.2) {\large ``Dictator'' $\times$\\[2pt] Dick Tater $\nrightarrow$ fuse};
 
   \draw[arr] (full) -- (0, 0.6);
-  \draw[arr] (abl1) -- (5.5, 0.6);
-  \draw[arr] (abl4) -- (11, 0.6);
+  \draw[arr] (abl1) -- (5, 0.6);
+  \draw[arr] (abl4) -- (10, 0.6);
 \end{tikzpicture}
 \end{center}
 
@@ -859,7 +886,7 @@ CPR = circuit precision-recall (1.0 = perfect; $>$1.0 = slight over-recovery is 
 \begin{frame}{Summary across tasks}
 
 \begin{center}
-\includegraphics[width=0.95\textwidth]{../results_modal/plots/summary_bars.png}
+\includegraphics[width=0.95\textwidth]{../results/plots/summary_bars.png}
 \end{center}
 
 \vspace{-0.3em}
@@ -919,7 +946,61 @@ Top attribution edges reveal shared structure across tasks:
 \end{frame}
 
 % =============================================
-% CIRCUIT OVERLAP
+% CIRCUIT OVERLAP MATRIX — PREDICTION vs RESULTS
+% =============================================
+\begin{frame}{Circuit overlap matrix --- prediction vs.\ results}
+
+\begin{columns}[T]
+\begin{column}{0.46\textwidth}
+\begin{center}
+\textbf{Predicted}\\[4pt]
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{l|ccccc}
+ & \rotatebox{60}{\textbf{Hypo}} & \rotatebox{60}{\textbf{Clip}} & \rotatebox{60}{\textbf{Init}} & \rotatebox{60}{\textbf{Orny}} & \rotatebox{60}{\textbf{Homo}} \\
+\hline
+\textbf{Clip} & \cellcolor{circuit!25}high & & & & \\
+\textbf{Init} & ? & ? & & & \\
+\textbf{Orny} & \cellcolor{phoneme!10}low & ? & ? & & \\
+\textbf{Homo} & ? & ? & ? & ? & \\
+\textbf{Folk} & ? & ? & ? & ? & ? \\
+\end{tabular}
+\end{center}
+
+\vspace{0.3em}
+\scriptsize
+Op 1--2 (both shortening) predicted high.\\
+Op 4 (fusion) predicted low overlap with others.
+\end{column}
+
+\begin{column}{0.54\textwidth}
+\begin{center}
+\textbf{Observed (EAP-IG, top 30 heads)}\\[4pt]
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{l|cccccc}
+ & \rotatebox{60}{\textbf{Hypo}} & \rotatebox{60}{\textbf{Clip}} & \rotatebox{60}{\textbf{Init}} & \rotatebox{60}{\textbf{Orny}} & \rotatebox{60}{\textbf{Homo}} & \rotatebox{60}{\textbf{Folk}} \\
+\hline
+\textbf{Hypo} & \cellcolor{accent!25}-- & .43 & \cellcolor{chill!12}.25 & \cellcolor{backbone!22}\textbf{.58} & .46 & .50 \\
+\textbf{Clip} & .43 & \cellcolor{accent!25}-- & \cellcolor{chill!12}.22 & .40 & .50 & .40 \\
+\textbf{Init} & \cellcolor{chill!12}.25 & \cellcolor{chill!12}.22 & \cellcolor{accent!25}-- & \cellcolor{chill!12}.22 & \cellcolor{chill!12}.20 & \cellcolor{chill!12}.25 \\
+\textbf{Orny} & \cellcolor{backbone!22}\textbf{.58} & .40 & \cellcolor{chill!12}.22 & \cellcolor{accent!25}-- & .43 & .50 \\
+\textbf{Homo} & .46 & .50 & \cellcolor{chill!12}.20 & .43 & \cellcolor{accent!25}-- & .46 \\
+\textbf{Folk} & .50 & .40 & \cellcolor{chill!12}.25 & .50 & .46 & \cellcolor{accent!25}-- \\
+\end{tabular}
+\end{center}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\small
+\textbf{H1} \checkmark{} 6 heads appear in all 6 circuits --- all in L8--11.\\
+\textbf{H2} \checkmark{} Initialism is the most distinct (Jaccard $\leq$ 0.25 with every other task).\\
+\textbf{H3} \checkmark{} Oronym--Hypocorism highest overlap (0.58) --- compositional reuse.
+\end{frame}
+
+% =============================================
+% CIRCUIT OVERLAP — PLOTS
 % =============================================
 \begin{frame}{Circuit overlap: shared backbone, distinct specialists}
 \hypertarget{sl:circuitoverlap}{}
@@ -928,7 +1009,7 @@ Top attribution edges reveal shared structure across tasks:
 \begin{column}{0.48\textwidth}
 \begin{center}
 \textbf{Jaccard MDS}\\[4pt]
-\includegraphics[width=\textwidth]{../results_modal/plots/jaccard_mds.png}
+\includegraphics[width=\textwidth]{../results/plots/jaccard_mds.png}
 \end{center}
 {\scriptsize Tasks cluster by computational type. Op 1/5 (stored lookup) close together. Op 4 (oronym) separate.}
 \end{column}
@@ -936,7 +1017,7 @@ Top attribution edges reveal shared structure across tasks:
 \begin{column}{0.48\textwidth}
 \begin{center}
 \textbf{Edge overlap heatmap}\\[4pt]
-\includegraphics[width=\textwidth]{../results_modal/plots/overlap_heatmap.png}
+\includegraphics[width=\textwidth]{../results/plots/overlap_heatmap.png}
 \end{center}
 {\scriptsize Fraction of top-200 edges shared between each task pair. High diagonal = self-overlap. Off-diagonal = shared backbone vs.\ unique heads.}
 \end{column}
@@ -947,12 +1028,35 @@ Top attribution edges reveal shared structure across tasks:
 \end{frame}
 
 % =============================================
+% METHOD AGREEMENT
+% =============================================
+\begin{frame}{Three methods, same answer (1/2)}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth,height=0.78\textheight,keepaspectratio]{figures/jaccard_top.png}
+\end{center}
+
+\vspace{-0.3em}
+EAP-IG, activation patching, and causal discovery agree on circuit heads. Homophone has the highest method agreement (Jaccard 0.67); initialism is the most distinct circuit across tasks.
+\end{frame}
+
+\begin{frame}{Three methods, same answer (2/2)}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth,height=0.78\textheight,keepaspectratio]{figures/jaccard_bottom.png}
+\end{center}
+
+\vspace{-0.3em}
+91\% of heads agreed on by all three methods are in layers 8--11. Layer 10 alone accounts for 24 triple-agreed head-task pairs.
+\end{frame}
+
+% =============================================
 % FAITHFULNESS CURVES
 % =============================================
 \begin{frame}{Faithfulness: circuits recover full-model performance}
 
 \begin{center}
-\includegraphics[width=0.7\textwidth]{../results_modal/plots/overlay_gpt2.png}
+\includegraphics[width=0.7\textwidth]{../results/plots/overlay_gpt2.png}
 \end{center}
 
 \vspace{-0.3em}
@@ -981,36 +1085,34 @@ Sparse, faithful circuits exist for every phonological operation in GPT-2.}
 \begin{frame}{From circuits to causal variables}
 \hypertarget{sl:cvl}{}
 
-\small
 Circuit localization tells us \textbf{which} heads matter. But not \textbf{what} they communicate.
 
-\vspace{0.5em}
+\vspace{0.8em}
 \begin{center}
 \begin{tikzpicture}[
-  scale=0.8, transform shape,
-  box/.style={draw, rounded corners=4pt, minimum height=1.5cm, minimum width=4.2cm,
-              align=center, font=\small},
-  arr/.style={-{Stealth[length=3mm]}, very thick}
+  box/.style={draw, rounded corners=6pt, minimum height=2.2cm, minimum width=5.5cm,
+              align=center, font=\normalsize},
+  arr/.style={-{Stealth[length=4mm]}, very thick}
 ]
   \node[box, fill=accent!10] (cl) at (0, 0) {
-    \textbf{Circuit Localization}\\[3pt]
-    {\scriptsize ``Head 9.9 matters}\\
-    {\scriptsize for oronym task''}
+    \textbf{Circuit Localization}\\[5pt]
+    {\small ``Head 9.9 matters}\\
+    {\small for oronym task''}
   };
 
-  \node[box, fill=fusion!10] (cvl) at (7, 0) {
+  \node[box, fill=fusion!10] (cvl) at (8, 0) {
     \textbf{Causal Variable}\\
-    \textbf{Localization}\\[3pt]
-    {\scriptsize ``Layer 9 encodes the fused}\\
-    {\scriptsize phoneme in a 1D subspace''}
+    \textbf{Localization}\\[5pt]
+    {\small ``Layer 9 encodes the fused}\\
+    {\small phoneme in a 1D subspace''}
   };
 
   \draw[arr, circuit] (cl) -- (cvl)
-    node[midway, above, font=\scriptsize\bfseries] {DAS / IIA};
+    node[midway, above, font=\normalsize\bfseries] {DAS / IIA};
 \end{tikzpicture}
 \end{center}
 
-\vspace{0.5em}
+\vspace{0.8em}
 \textbf{Method:} \href{https://arxiv.org/abs/2303.02536}{Distributed Alignment Search} (DAS; Geiger et al., 2024) --- find a linear subspace in the residual stream at each layer that encodes a specific causal variable (e.g., the target phoneme).
 
 \vspace{0.3em}
@@ -1496,8 +1598,6 @@ Weight-space features & Planned & Cross-reference circuits \\
 \end{tabular}
 \end{center}
 
-\vspace{0.8em}
-Target venue: COLM, Findings of ACL, or MI workshop.
 \end{frame}
 
 % =============================================
