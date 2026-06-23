@@ -8,7 +8,7 @@ Generates 4 figures from the Modal run results:
 
 Usage:
     PYTHONPATH=. python -m lib.viz.visualize_results
-    PYTHONPATH=. python -m lib.viz.visualize_results --results-dir results_modal
+    PYTHONPATH=. python -m lib.viz.visualize_results --results-dir results
 """
 import argparse
 import json
@@ -369,8 +369,8 @@ def fig_top_edges_by_layer(summary: dict, results_dir: Path, out_dir: Path, top_
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--results-dir", type=str, default="results_modal")
-    parser.add_argument("--out-dir", type=str, default="results_modal/plots")
+    parser.add_argument("--results-dir", type=str, default="results")
+    parser.add_argument("--out-dir", type=str, default="results/plots")
     parser.add_argument("--top-k", type=int, default=200)
     parser.add_argument("--skip-margins", action="store_true",
                         help="Skip margin distributions (requires model load)")

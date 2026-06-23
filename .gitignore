@@ -7,8 +7,7 @@ __pycache__/
 *.pt
 *.pkl
 
-# Local results (synced via Modal volume)
-results/
+# Old results dir
 results_modal/
 
 # Build artifacts
@@ -35,3 +34,5 @@ arxiv_*.pdf
 
 # Lock file
 uv.lock
+
+CLAUDE.md
