@@ -1,0 +1,26 @@
+{
+  "title": "Phonological Assembly Circuits in GPT-2",
+  "upload_type": "software",
+  "description": "Causal discovery of phonological assembly circuits in GPT-2 using EAP, DAS, and causal graph algorithms.",
+  "creators": [
+    {
+      "name": "Tower, Elliot",
+      "orcid": "0000-0001-7004-8884"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "phonology",
+    "circuits",
+    "GPT-2",
+    "mechanistic interpretability",
+    "causal discovery"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/elliottower/phonetic-circuits",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
